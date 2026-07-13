@@ -241,6 +241,82 @@
 </body>
 </html>
 
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>进度规划完成表</title>
+    <style>
+        body {font-family: "Microsoft Yahei", sans-serif;max-width: 1200px;margin: 30px auto;padding: 0 20px;line-height: 1.7;color: #222;}
+        h1 {text-align: center;color: #1a4b9c;border-bottom: 2px solid #1a4b9c;padding-bottom: 10px;}
+        h2 {color: #265cad;margin-top: 35px;border-left: 5px solid #265cad;padding-left: 12px;}
+        h3 {color: #3366aa;margin-top:25px;}
+        table {border-collapse: collapse;width: 100%;margin: 15px 0;}
+        th, td {border: 1px solid #bbb;padding: 10px 12px;text-align: left;}
+        th {background: #eef3fb;}
+        .done {background: #e8f5e9;color: #1b7a35;font-weight: bold;}
+        .todo {background: #fff3e0;color: #b26a00;}
+        .step-box {background: #f5f8ff;padding:12px 18px;border-radius:6px;margin:8px 0;}
+    </style>
+</head>
+<body>
+    <h1>进度规划完成表</h1>
+    <p>基于「数据准备」已完成的现实，将原工作重新划分为六个阶段：数据准备定为阶段一（已完成），其余阶段顺延。下表跟踪各阶段进度。</p>
+
+    <h2>一、阶段总览</h2>
+    <table>
+        <tr><th>阶段</th><th>名称</th><th>工作项数</th><th>状态</th></tr>
+        <tr><td>阶段一</td><td>数据准备</td><td>7 项</td><td class="done">✅ 已完成</td></tr>
+        <tr><td>阶段二</td><td>数据筛选与探索性可视化</td><td>5 项</td><td class="done">✅ 已完成</td></tr>
+        <tr><td>阶段三</td><td>销量预测建模</td><td>6 项</td><td class="todo">⬜ 待开始</td></tr>
+        <tr><td>阶段四</td><td>舆情文本深度处理</td><td>4 项</td><td class="todo">⬜ 待开始</td></tr>
+        <tr><td>阶段五</td><td>特征融合与归因</td><td>3 项</td><td class="todo">⬜ 待开始</td></tr>
+        <tr><td>阶段六</td><td>交付固化与看板</td><td>3 项</td><td class="todo">⬜ 待开始</td></tr>
+    </table>
+
+    <h2>二、阶段一明细（已完成）</h2>
+    <div class="step-box">1. 销量数据采集（Step1，sales.csv）</div>
+    <div class="step-box">2. 车型配置采集（Step5，vehicles.csv 92列）</div>
+    <div class="step-box">3. 舆情数据采集（阶段2职责，40k条 / 490系）</div>
+    <div class="step-box">4. 原始数据预处理（Step2：去重 / 异常值 / 字段标准化）</div>
+    <div class="step-box">5. 时序缺失值修复（Step6：插值补齐）</div>
+    <div class="step-box">6. 三表 ID 对齐 + 清洗对齐（series_mapping + analysis_input）</div>
+    <div class="step-box">7. 双语文档 + 仓库搭建</div>
+
+    <h2>三、阶段二明细（已完成）</h2>
+    <div class="step-box">1. 筛选连续≥24个月销量的成熟车型子集 → sales_filtered_24m.csv（669 系，Step3）</div>
+    <div class="step-box">2. 销量趋势可视化 → figures/sales_trend.png（Step7）</div>
+    <div class="step-box">3. 车型分类分布可视化 → figures/category_distribution.png（Step7）</div>
+    <div class="step-box">4. 硬件特征分布可视化 → figures/hardware_features.png（Step7）</div>
+    <div class="step-box">5. 全量时序汇总统计：中断次数 / 最长连续 / 断档 → timeseries_summary.csv（1122 系，Step13）</div>
+
+    <h2>四、后续阶段工作项（阶段三起）</h2>
+    <h3>阶段三：销量预测建模（6 项）</h3>
+    <div class="step-box">1. ARIMA 模型训练+评估（Step8）</div>
+    <div class="step-box">2. LSTM 深度学习模型（Step9）</div>
+    <div class="step-box">3. Prophet 模型（Step10）</div>
+    <div class="step-box">4. XGBoost 模型（Step10）</div>
+    <div class="step-box">5. Prophet+XGBoost 融合（Step10）</div>
+    <div class="step-box">6. 多模型横向对比评估（Step11）</div>
+
+    <h3>阶段四：舆情文本深度处理（4 项）</h3>
+    <div class="step-box">1. 中文 NLP 文本情感（jieba 分词 + SnowNLP）</div>
+    <div class="step-box">2. LLM 大模型接入（API 批量解析车评）</div>
+    <div class="step-box">3. 文本标签体系 + 结构化特征提取</div>
+    <div class="step-box">4. 衍生舆情特征（好评率 / 负面频次 / 维度情感）</div>
+
+    <h3>阶段五：特征融合与归因（3 项）</h3>
+    <div class="step-box">1. 全量特征归因可视化（配置/口碑对销量权重，Step12）</div>
+    <div class="step-box">2. 混合 LSTM 迭代训练（多特征融合，Step14）</div>
+    <div class="step-box">3. 跨品牌影响因子回归（舆情×配置×销量）</div>
+
+    <h3>阶段六：交付固化与看板（3 项）</h3>
+    <div class="step-box">1. BI 可视化 / 舆情监控看板</div>
+    <div class="step-box">2. 全链路固化（脚本封装 + 流程固定 + 调参标准，Step15）</div>
+    <div class="step-box">3. 项目文档 / 分析报告定稿</div>
+</body>
+</html>
+
 
 
 

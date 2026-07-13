@@ -26,6 +26,8 @@ venv/
 # 原始/中间数据体积大, 不入库, 全部可用脚本复现:
 data/raw/*.csv
 data/sentiment/*.csv
+# 阶段二派生数据(由 scripts/explore_stage2.py 生成, 可复现):
+data/processed/
 
 # Database
 *.db
@@ -34,6 +36,9 @@ data/sentiment/*.csv
 # Logs
 *.log
 logs/
+
+# Jupyter
+.ipynb_checkpoints/
 
 # Reference (third-party code)
 reference/

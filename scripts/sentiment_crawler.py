@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
-懂车帝口碑舆情采集器 v7 (生产版)
-====================================
+懂车帝口碑舆情采集
   基于懂车帝公开JSON API, 纯requests请求
   参考: github.com/TengJiao33/Cars_Scraper
 
@@ -16,7 +15,7 @@
   python sentiment_crawler.py --series 415 # 指定单个车系
 
 输出:
-  sentiment_reviews.csv — 评论明细表(4284条)
+  sentiment_reviews.csv — 评论明细表(40054条)
 """
 
 import os
@@ -34,7 +33,7 @@ import pandas as pd
 #  配置
 # ============================================================
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)          # ev 项目根目录
+PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)          # 项目根目录
 RAW_DIR = os.path.join(PROJECT_ROOT, "data", "raw")          # 原始数据
 OUTPUT_DIR = os.path.join(PROJECT_ROOT, "data", "sentiment") # 产出数据
 
