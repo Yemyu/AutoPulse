@@ -26,7 +26,7 @@ venv/
 # 原始/中间数据体积大, 不入库, 全部可用脚本复现:
 data/raw/*.csv
 data/sentiment/*.csv
-# 阶段二派生数据(由 scripts/explore_stage2.py 生成, 可复现):
+# 阶段二/阶段三派生数据(由 scripts/04_explore_eda.py 及 05-13 建模脚本生成, 含 stage3/ 子目录, 均可复现):
 data/processed/
 
 # Database
@@ -44,6 +44,6 @@ logs/
 reference/
 
 # 数据文档: 数据 README 入库跟踪; 质量报告可复现, 不入库
-# (由 scripts/build_sentiment_summary.py 生成到 docs/)
+# (由 scripts/03_build_sentiment_summary.py 生成到 docs/)
 docs/data_quality_report.json
 docs/data_quality_report.md

@@ -10,9 +10,9 @@
   - 聚合为车系级情感指标 → 影响因子回归分析
 
 运行方式:
-  python sentiment_crawler.py              # 全量采集(默认大众)
-  python sentiment_crawler.py --all        # 全品牌采集(所有有销量的车系)
-  python sentiment_crawler.py --series 415 # 指定单个车系
+  python 01_crawl_reviews.py              # 全量采集(默认大众)
+  python 01_crawl_reviews.py --all        # 全品牌采集(所有有销量的车系)
+  python 01_crawl_reviews.py --series 415 # 指定单个车系
 
 输出:
   sentiment_reviews.csv — 评论明细表(40054条)

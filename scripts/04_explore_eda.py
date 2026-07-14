@@ -21,6 +21,7 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import _font_setup
 from matplotlib.ticker import FuncFormatter
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

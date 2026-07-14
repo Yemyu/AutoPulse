@@ -312,7 +312,7 @@ vehicles ———— series_id ———— series_mapping ———— series_
 
 ## 六、舆情口碑数据（sentiment）
 
-**来源**：懂车帝公开口碑 API（`dongchedi.com/motor/pc/car/series/get_review_list`），纯 `requests` 采集，零浏览器、零登录。采集脚本 `scripts/sentiment_crawler.py`（v7，支持 `--all` / `--brands` / `--series` / `--max`，断点续传）。
+**来源**：懂车帝公开口碑 API（`dongchedi.com/motor/pc/car/series/get_review_list`），纯 `requests` 采集，零浏览器、零登录。采集脚本 `scripts/01_crawl_reviews.py`（v7，支持 `--all` / `--brands` / `--series` / `--max`，断点续传）。
 
 ### 文件清单
 
@@ -322,7 +322,7 @@ vehicles ———— series_id ———— series_mapping ———— series_
 | `data/sentiment/sentiment_summary.csv` | 490 车系 | — | 车系级情感聚合指标 |
 | `data/README.md` 第八章 | — | — | 覆盖与质量报告（已并入本数据文档） |
 
-> 重新生成汇总 / 质量报告：`python scripts/build_sentiment_summary.py`（读取 `sentiment_reviews.csv`，输出 `sentiment_summary.csv` 至 `data/sentiment/`，并输出 `data_quality_report.json` / `.md` 至 `docs/`，可重新生成）。
+> 重新生成汇总 / 质量报告：`python scripts/03_build_sentiment_summary.py`（读取 `sentiment_reviews.csv`，输出 `sentiment_summary.csv` 至 `data/sentiment/`，并输出 `data_quality_report.json` / `.md` 至 `docs/`，可重新生成）。
 
 ### 采集范围（2026-07-10 完成全量采集）
 
@@ -391,7 +391,7 @@ vehicles ———— series_id ———— series_mapping ———— series_
 | `digg_count` / `comment_count` | 点赞 / 评论数 |
 | `car_model` / `buy_location` / `buy_price` / `buy_time` / `fuel_type` / `consumption` | 购车信息 |
 
-> ⚠️ `sentiment_reviews.csv` **不含品牌列**。品牌需通过 `series_id` 关联 `sales.csv`（字段 `brand`）或 `vehicles.csv`（`brand_name`）回补，见 `scripts/build_sentiment_summary.py` 的 `attach_brand()`。
+> ⚠️ `sentiment_reviews.csv` **不含品牌列**。品牌需通过 `series_id` 关联 `sales.csv`（字段 `brand`）或 `vehicles.csv`（`brand_name`）回补，见 `scripts/03_build_sentiment_summary.py` 的 `attach_brand()`。
 
 ### `sentiment_summary.csv` 列说明
 
@@ -418,7 +418,7 @@ sales    ──series_id──┘
 
 ## 七、分析就绪表（analysis_input.csv）
 
-由 `scripts/clean_and_align.py` 一键生成，是三表对齐后的分析输入：
+由 `scripts/02_clean_and_align.py` 一键生成，是三表对齐后的分析输入：
 
 - **输入**：`sentiment_reviews.csv`（清洗去重）→ 车系级聚合 ＋ `sales.csv`（销量按车系聚合）＋ `vehicles.csv`（车系级配置特征）
 - **输出**：一行一车系，列含
@@ -426,13 +426,13 @@ sales    ──series_id──┘
   - 销量标签：`total_sales` / `avg_monthly_sales` / `log_avg_monthly_sales` / `n_months` / `brand` / `category`
   - 车型特征：`official_price_wan` / `vehicle_class` / `energy_type` / `manufacturer` / `brand_name`
 - **对齐逻辑**：三类 `series_id` 统一转 `str` 后左连接；舆情系优先匹配销量（回归标签 Y），再匹配配置（特征 X）。
-- **当前状态**（全量采集已完成）：490 系 → 489 系命中销量，可直接进回归；重跑 `clean_and_align.py` 即可随数据刷新。
+- **当前状态**（全量采集已完成）：490 系 → 489 系命中销量，可直接进回归；重跑 `02_clean_and_align.py` 即可随数据刷新。
 
 ---
 
 ## 八、舆情数据质量与覆盖报告（完整版）
 
-> 本报告的原始生成逻辑见 `scripts/build_sentiment_summary.py`，重新运行会输出
+> 本报告的原始生成逻辑见 `scripts/03_build_sentiment_summary.py`，重新运行会输出
 > `docs/data_quality_report.json` 与 `docs/data_quality_report.md`（可复现）。以下为合并进本数据文档的快照。
 
 - 总评论数: **40,054**

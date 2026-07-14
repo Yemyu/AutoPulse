@@ -10,7 +10,7 @@
 供后续影响因子回归 / NLP 情感分析直接使用。
 
 运行:
-  python scripts/clean_and_align.py
+  python scripts/02_clean_and_align.py
 """
 import os
 import pandas as pd

@@ -10,7 +10,7 @@
   - 量化数据覆盖范围 (品牌/车系/评论数) 与质量 (重复/缺失/极性)
 
 运行:
-  python scripts/build_sentiment_summary.py
+  python scripts/03_build_sentiment_summary.py
 """
 import os
 import json

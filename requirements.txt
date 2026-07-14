@@ -14,3 +14,9 @@ scikit-learn>=1.3.0
 
 # 可视化 (BI 图表)
 matplotlib>=3.7.0
+
+# 销量预测建模 (阶段三)
+statsmodels>=0.14.0        # ARIMA
+xgboost>=2.0.0             # XGBoost (macOS 需额外 brew install libomp)
+prophet>=1.1.0             # Prophet (首次运行需安装 cmdstan 后端)
+torch>=2.0.0               # LSTM (全局 + 车系嵌入)
