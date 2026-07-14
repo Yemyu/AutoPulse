@@ -1,0 +1,237 @@
+{
+  "rule": {
+    "zh": "overall < -0.1 且 环比(对上月)下降 > 0.05",
+    "en": "overall < -0.1 & month-over-month drop > 0.05"
+  },
+  "alerts": [
+    {
+      "series_name": "卡罗拉",
+      "brand": "丰田",
+      "brand_en": "Toyota",
+      "series_en": "Corolla",
+      "period": "2022-05",
+      "overall": -0.2,
+      "overall_drop": -0.55
+    },
+    {
+      "series_name": "奥迪A5L Sportback",
+      "brand": "奥迪",
+      "brand_en": "Audi",
+      "series_en": "A5L Sportback",
+      "period": "2025-11",
+      "overall": -0.175,
+      "overall_drop": -0.493
+    },
+    {
+      "series_name": "途岳",
+      "brand": "大众",
+      "brand_en": "Volkswagen",
+      "series_en": "Tharu",
+      "period": "2026-05",
+      "overall": -0.2,
+      "overall_drop": -0.433
+    },
+    {
+      "series_name": "标致408X",
+      "brand": "标致",
+      "brand_en": "Peugeot",
+      "series_en": "408X",
+      "period": "2025-07",
+      "overall": -0.133,
+      "overall_drop": -0.433
+    },
+    {
+      "series_name": "英菲尼迪QX60",
+      "brand": "英菲尼迪",
+      "brand_en": "Infiniti",
+      "series_en": "QX60",
+      "period": "2024-12",
+      "overall": -0.125,
+      "overall_drop": -0.425
+    },
+    {
+      "series_name": "揽巡",
+      "brand": "大众",
+      "brand_en": "Volkswagen",
+      "series_en": "Tavendor",
+      "period": "2023-09",
+      "overall": -0.167,
+      "overall_drop": -0.417
+    },
+    {
+      "series_name": "威兰达",
+      "brand": "丰田",
+      "brand_en": "Toyota",
+      "series_en": "Wildlander",
+      "period": "2023-04",
+      "overall": -0.233,
+      "overall_drop": -0.367
+    },
+    {
+      "series_name": "奥德赛",
+      "brand": "本田",
+      "brand_en": "Honda",
+      "series_en": "Odyssey",
+      "period": "2026-02",
+      "overall": -0.2,
+      "overall_drop": -0.333
+    },
+    {
+      "series_name": "吉利几何A",
+      "brand": "吉利几何",
+      "brand_en": "Geely Geometry",
+      "series_en": "Geometry A",
+      "period": "2022-07",
+      "overall": -0.167,
+      "overall_drop": -0.333
+    },
+    {
+      "series_name": "威飒",
+      "brand": "丰田",
+      "brand_en": "Toyota",
+      "series_en": "Venza",
+      "period": "2024-07",
+      "overall": -0.167,
+      "overall_drop": -0.333
+    },
+    {
+      "series_name": "海鸥",
+      "brand": "比亚迪",
+      "brand_en": "BYD",
+      "series_en": "Seagull",
+      "period": "2025-08",
+      "overall": -0.117,
+      "overall_drop": -0.329
+    },
+    {
+      "series_name": "风光580",
+      "brand": "东风风光",
+      "brand_en": "Dongfeng Fengguang",
+      "series_en": "Fengguang 580",
+      "period": "2022-02",
+      "overall": -0.133,
+      "overall_drop": -0.267
+    },
+    {
+      "series_name": "奥迪Q3",
+      "brand": "奥迪",
+      "brand_en": "Audi",
+      "series_en": "Q3",
+      "period": "2022-02",
+      "overall": -0.125,
+      "overall_drop": -0.225
+    },
+    {
+      "series_name": "探索06 C-DM",
+      "brand": "奇瑞",
+      "brand_en": "Chery",
+      "series_en": "Tansuo 06 C-DM",
+      "period": "2024-10",
+      "overall": -0.167,
+      "overall_drop": -0.187
+    },
+    {
+      "series_name": "AION Y",
+      "brand": "埃安",
+      "brand_en": "Aion",
+      "series_en": "AION Y",
+      "period": "2025-12",
+      "overall": -0.117,
+      "overall_drop": -0.15
+    },
+    {
+      "series_name": "捷途X90 PLUS",
+      "brand": "捷途",
+      "brand_en": "Jetour",
+      "series_en": "X90 PLUS",
+      "period": "2024-08",
+      "overall": -0.2,
+      "overall_drop": -0.133
+    },
+    {
+      "series_name": "捷豹XFL",
+      "brand": "捷豹",
+      "brand_en": "Jaguar",
+      "series_en": "XFL",
+      "period": "2025-12",
+      "overall": -0.167,
+      "overall_drop": -0.067
+    }
+  ],
+  "monthly": [
+    {
+      "month": "2022-02",
+      "count": 2
+    },
+    {
+      "month": "2022-05",
+      "count": 1
+    },
+    {
+      "month": "2022-07",
+      "count": 1
+    },
+    {
+      "month": "2023-04",
+      "count": 1
+    },
+    {
+      "month": "2023-09",
+      "count": 1
+    },
+    {
+      "month": "2024-07",
+      "count": 1
+    },
+    {
+      "month": "2024-08",
+      "count": 1
+    },
+    {
+      "month": "2024-10",
+      "count": 1
+    },
+    {
+      "month": "2024-12",
+      "count": 1
+    },
+    {
+      "month": "2025-07",
+      "count": 1
+    },
+    {
+      "month": "2025-08",
+      "count": 1
+    },
+    {
+      "month": "2025-11",
+      "count": 1
+    },
+    {
+      "month": "2025-12",
+      "count": 2
+    },
+    {
+      "month": "2026-02",
+      "count": 1
+    },
+    {
+      "month": "2026-05",
+      "count": 1
+    }
+  ],
+  "risk_dist": [
+    {
+      "level": "中危",
+      "count": 1
+    },
+    {
+      "level": "低危",
+      "count": 16
+    }
+  ],
+  "conclusion": {
+    "zh": "按上述规则共触发 17 条舆情预警；这些车系口碑出现明显负向恶化，建议作为声誉风险重点监测对象。",
+    "en": "17 sentiment alerts triggered under the above rule; these series show marked negative deterioration and should be prioritized for reputation risk monitoring."
+  }
+}

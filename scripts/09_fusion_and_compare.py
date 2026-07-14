@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
-Stage 3 - Step 10 (c) fusion + Step 11 comparison
-=================================================
+fusion + Step 11 comparison
 - Fusion: Prophet + XGBoost inverse-WMAPE weighted average (heuristic; more
   weight to the more accurate model on the test set).
 - Comparison: aggregate per-series metrics (mean WMAPE/MAPE/RMSE/MAE) for
@@ -77,7 +76,7 @@ def agg_results(path, model):
 
 
 def main():
-    # ---- fusion ----
+# fusion
     pp = pd.read_csv(os.path.join(PROC, "prophet_preds.csv"))
     xp = pd.read_csv(os.path.join(PROC, "xgboost_preds.csv"))
     m = pp.merge(xp, on=["series_name", "date"], suffixes=("_prophet", "_xgboost"))
@@ -100,7 +99,7 @@ def main():
     m[["series_name", "date", "actual", "pred_fusion"]].to_csv(
         os.path.join(PROC, "fusion_preds.csv"), index=False)
 
-    # ---- comparison table ----
+# comparison table
     fp = pd.read_csv(os.path.join(PROC, "fusion_preds.csv"))
     fa, fpv = fp["actual"].values.astype(float), fp["pred_fusion"].values.astype(float)
     fusion_vol = np.sum(np.abs(fa - fpv)) / np.sum(np.abs(fa)) * 100 if np.sum(np.abs(fa)) > 0 else np.nan
@@ -126,7 +125,7 @@ def main():
     print("\n===== Stage 3 multi-model comparison (mean per-series, horizon=3) =====")
     print(comp.to_string(index=False))
 
-    # ---- bar chart ----
+# bar chart
     fig, axes = plt.subplots(1, 2, figsize=(12, 4.5), constrained_layout=True)
     c = comp.sort_values("WMAPE_vol")
     colors = ["#54A24B" if i == 0 else "#4C78A8" for i in range(len(c))]

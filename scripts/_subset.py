@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
 Stage 3 — shared representative subset
-======================================
 Builds (once) and caches a *stratified* representative subset of ~N series,
 used by every stage-3 modelling script so they all evaluate on the SAME
 series (apples-to-apples comparison).

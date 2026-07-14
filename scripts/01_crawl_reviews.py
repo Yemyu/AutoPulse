@@ -2,7 +2,6 @@
 """
 懂车帝口碑舆情采集
   基于懂车帝公开JSON API, 纯requests请求
-  参考: github.com/TengJiao33/Cars_Scraper
 
 数据用途:
   - 与 vehicles.csv 通过 series_id 关联 → 车辆参数(X特征)
@@ -29,9 +28,7 @@ from datetime import datetime
 import requests
 import pandas as pd
 
-# ============================================================
 #  配置
-# ============================================================
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)          # 项目根目录
 RAW_DIR = os.path.join(PROJECT_ROOT, "data", "raw")          # 原始数据
@@ -52,9 +49,7 @@ DEFAULTS = {
 }
 
 
-# ============================================================
 #  核心功能
-# ============================================================
 
 def load_vehicle_series(brand_filter=None):
     """
@@ -299,9 +294,7 @@ def generate_summary(output_path):
     return summary, out_path
 
 
-# ============================================================
 #  主流程
-# ============================================================
 
 def main():
     parser = argparse.ArgumentParser(description='懂车帝口碑舆情采集器')
@@ -325,7 +318,7 @@ def main():
     print("  零浏览器 · 零登录 · 纯API · 生产版")
     print("=" * 60)
 
-    # --- 确定目标 ---
+# 确定目标
     if args.series:
         # 指定车系
         target = pd.DataFrame({
@@ -355,7 +348,7 @@ def main():
 
     print(f"\n  目标车系: {len(target)} 个")
 
-    # --- 断点续传 ---
+# 断点续传
     completed = get_completed_ids(output_file)
     if completed:
         pending = target[~target['series_id'].isin(completed)]
@@ -366,7 +359,7 @@ def main():
         print("\n  ✅ 所有目标已完成!")
         return
 
-    # --- 开始采集 ---
+# 开始采集
     all_new = []
     success, empty, fail = 0, 0, 0
 
@@ -397,7 +390,7 @@ def main():
         if idx < len(target) - 1:
             time.sleep(random.uniform(1.0, 2.0))
 
-    # --- 汇总 ---
+# 汇总
     elapsed = time.time() - start
     final_total = len(all_new)
 

@@ -49,7 +49,7 @@ def main():
     brand["period"] = pd.to_datetime(brand["period"])
     brand = brand.sort_values(["brand", "period"])
 
-    # ---- (1) 全市场级：按月聚合 ----
+# 全市场级：按月聚合
     mkt = brand.groupby("period").mean(numeric_only=True)
     mkt = mkt.diff().dropna()  # 一阶差分，去趋势/平稳化
     print(f"全市场时序: {len(mkt)} 个月 (差分后)")
@@ -71,7 +71,7 @@ def main():
         flag = " *显著*" if r["sig_any"] else ""
         print(f"  {r['aspect']:20s} min_p={r['min_p']:.4f}{flag}")
 
-    # ---- (2) 品牌级：逐品牌 ----
+# 品牌级：逐品牌
     sig_counts = {a: 0 for a in ASPECTS}
     tot_counts = {a: 0 for a in ASPECTS}
     for bname, g in brand.groupby("brand"):
@@ -97,7 +97,7 @@ def main():
         rate = f"{r['sig_rate']*100:.0f}%" if pd.notna(r["sig_rate"]) else "NA"
         print(f"  {r['aspect']:20s} 显著 {int(r['n_sig'])}/{int(r['n_brands_tested'])} = {rate}")
 
-    # ---- 可视化 ----
+# 可视化
     # 图1：全市场情感均值 vs 平均销量（差分前原始水平）
     raw = brand.groupby("period").mean(numeric_only=True)
     fig, ax1 = plt.subplots(figsize=(11, 4.5))

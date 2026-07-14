@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block lead %}
+<p class="lead-text" data-i18n="ov_lead">AutoPulse 将汽车月度销量数据与懂车帝用户口碑进行对齐，系统评估舆情对销量预测与归因的价值。</p>
+{% endblock %}
+{% set title='项目概览' %}
+{% set title_key='ov_title' %}
+{% block content %}
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div><span class="kpi-val" id="kpi-coverage">-</span><span class="kpi-unit" data-i18n="ov_unit_series">车系</span></div>
+      <div class="kpi-label" data-i18n="ov_kpi_coverage">覆盖车系</div>
+    </div>
+    <div class="kpi">
+      <div><span class="kpi-val" id="kpi-wmape">-</span><span class="kpi-unit">%</span></div>
+      <div class="kpi-label" data-i18n="ov_kpi_forecast">预测 WMAPE</div>
+    </div>
+    <div class="kpi">
+      <div><span class="kpi-val" id="kpi-horizon">-</span><span class="kpi-unit" data-i18n="ov_unit_horizon">月</span></div>
+      <div class="kpi-label" data-i18n="ov_kpi_horizon">预测区间</div>
+    </div>
+    <div class="kpi">
+      <div><span class="kpi-val" id="kpi-alerts">-</span><span class="kpi-unit" data-i18n="ov_unit_alert">条</span></div>
+      <div class="kpi-label" data-i18n="ov_kpi_alerts">舆情预警</div>
+    </div>
+    <div class="kpi">
+      <div><span class="kpi-val" id="kpi-brands">-</span><span class="kpi-unit" data-i18n="ov_unit_brand">个</span></div>
+      <div class="kpi-label" data-i18n="ov_kpi_brands">覆盖品牌</div>
+    </div>
+    <div class="kpi">
+      <div><span class="kpi-val" id="kpi-reviews">-</span><span class="kpi-unit" data-i18n="ov_unit_review">条</span></div>
+      <div class="kpi-label" data-i18n="ov_kpi_reviews">评论样本</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 data-i18n="ov_stage_flow">阶段流程</h3>
+    <div class="stage-flow" id="stageFlow"></div>
+  </div>
+
+  <div class="card">
+    <h3 data-i18n="ov_monthly_trend">全市场月度销量走势</h3>
+    <div id="chartTrend" class="chart"></div>
+  </div>
+
+  <div class="card conclusion-card">
+    <h3 data-i18n="ov_key_findings">核心发现</h3>
+    <ul class="findings-list" id="findings"></ul>
+  </div>
+{% endblock %}
+{% block scripts %}
+<script>
+loadJSON('overview').then(function (d) {
+  document.getElementById('kpi-coverage').textContent = d.kpis.coverage_series;
+  document.getElementById('kpi-wmape').textContent = d.kpis.forecast_wmape;
+  document.getElementById('kpi-horizon').textContent = d.kpis.forecast_horizon;
+  document.getElementById('kpi-alerts').textContent = d.kpis.alert_count;
+  document.getElementById('kpi-brands').textContent = d.kpis.brand_count;
+  document.getElementById('kpi-reviews').textContent = d.kpis.review_count ? d.kpis.review_count.toLocaleString() : '-';
+
+  if (d.monthly_trend && d.monthly_trend.length) {
+    var chart = initChart('chartTrend');
+    chart.setOption({
+      tooltip: tooltipStyle(),
+      grid: baseGrid({ top: 24, bottom: 40 }),
+      xAxis: Object.assign({ type: 'category', data: d.monthly_trend.map(function(x){return x.month;}), axisLabel: { interval: Math.floor(d.monthly_trend.length/8) } }, axisStyle()),
+      yAxis: Object.assign({ type: 'value' }, axisStyle()),
+      series: [{ type: 'line', data: d.monthly_trend.map(function(x){return x.sales;}), smooth: true, itemStyle: { color: window.AUTOPULSE.primary }, areaStyle: { color: 'rgba(44,123,229,.12)' } }]
+    });
+  }
+
+  var flow = document.getElementById('stageFlow');
+  flow.innerHTML = '';
+  d.stages.forEach(function (s) {
+    var cls = 'stage ' + (s.status === 'done' ? 'done' : (s.status === 'current' ? 'current' : ''));
+    var div = document.createElement('div');
+    div.className = cls;
+    div.innerHTML = '<div class="stage-no">Stage ' + s.id + '</div>' +
+                    '<div class="stage-name">' + s.name + '</div>' +
+                    '<div class="stage-en">' + s.en + '</div>';
+    flow.appendChild(div);
+  });
+
+  var list = document.getElementById('findings');
+  list.innerHTML = '';
+    d.findings.forEach(function (f) {
+      var li = document.createElement('li');
+      li.textContent = window.AUTOPULSE.lang === 'en' ? f.en : f.zh;
+      list.appendChild(li);
+    });
+
+  document.addEventListener('i18nChanged', function () {
+    list.innerHTML = '';
+    d.findings.forEach(function (f) {
+      var li = document.createElement('li');
+      li.textContent = window.AUTOPULSE.lang === 'en' ? f.en : f.zh;
+      list.appendChild(li);
+    });
+  });
+});
+</script>
+{% endblock %}

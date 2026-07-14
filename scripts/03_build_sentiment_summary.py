@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
 舆情汇总 + 数据质量报告生成器
-================================
 读取 sentiment_reviews.csv, 重新生成 sentiment_summary.csv (车系级聚合),
 并输出一份完整的数据覆盖与质量报告 (JSON + Markdown)。
 

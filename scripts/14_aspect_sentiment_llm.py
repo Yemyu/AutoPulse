@@ -30,9 +30,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from config import settings  # noqa: E402
 
-# ---------------------------------------------------------------------------
 # ABSA configuration
-# ---------------------------------------------------------------------------
 ASPECTS: list[str] = settings.ABSA_ASPECTS
 ASPECT_LABELS: dict[str, str] = {
     "appearance": "外观",
@@ -66,9 +64,7 @@ if not settings.DEEPSEEK_API_KEY or settings.DEEPSEEK_API_KEY == "xxxxx":
         "DEEPSEEK_API_KEY is not set. Please fill it in config/.env before running this script."
     )
 
-# ---------------------------------------------------------------------------
 # Prompt
-# ---------------------------------------------------------------------------
 _SYSTEM_PROMPT = (
     "你是一位汽车评论分析专家。请分析下面这条汽车用户评价，判断用户对以下维度分别表达了什么情感。"
     "如果评论没有提到某个维度，情感为0；提到且正面为1，提到且负面为-1。"
@@ -81,9 +77,7 @@ def build_user_prompt(content: str) -> str:
     return f"需要分析的维度：\n{aspects}\n\n评论：\n{content}\n\n输出JSON："
 
 
-# ---------------------------------------------------------------------------
 # API call
-# ---------------------------------------------------------------------------
 def call_deepseek(content: str) -> dict[str, int]:
     """Call DeepSeek chat completion and return parsed ABSA dict."""
     headers = {
@@ -163,9 +157,7 @@ def parse_absa_json(text: str) -> dict[str, int]:
     return result
 
 
-# ---------------------------------------------------------------------------
 # Data loading and filtering
-# ---------------------------------------------------------------------------
 def load_and_filter_reviews(limit: int | None = None) -> pd.DataFrame:
     df = pd.read_csv(settings.SENTIMENT_DIR / "sentiment_reviews.csv")
     df["publish_time"] = pd.to_datetime(df["publish_time"], errors="coerce")
@@ -191,9 +183,7 @@ def load_and_filter_reviews(limit: int | None = None) -> pd.DataFrame:
     return df
 
 
-# ---------------------------------------------------------------------------
 # Checkpointing and resumability
-# ---------------------------------------------------------------------------
 def load_checkpoint() -> dict[str, dict[str, int]]:
     if CHECKPOINT_PATH.exists():
         with CHECKPOINT_PATH.open("r", encoding="utf-8") as f:
@@ -210,9 +200,7 @@ def save_checkpoint(results: list[dict]) -> None:
         json.dump(payload, f, ensure_ascii=False, indent=2)
 
 
-# ---------------------------------------------------------------------------
 # Main processing
-# ---------------------------------------------------------------------------
 def process_review(row: pd.Series) -> dict:
     """Process a single review and return a dict with original fields + ABSA."""
     review_id = row["review_id"]

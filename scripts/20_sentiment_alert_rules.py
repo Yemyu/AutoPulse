@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
-Stage 5 - Step 3: sentiment alert rules
-=========================================
+sentiment alert rules
 基于月度综合情感定义简单预警规则：
   1. 综合情感 < -0.2（整体偏负面）
   2. 综合情感较上月环比下降 > 0.1（负面突变）

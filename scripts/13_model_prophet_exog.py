@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
-Stage 3 — Step 10 (a)+ : Prophet forecasting WITH exogenous regressors
-=====================================================================
++ : Prophet forecasting WITH exogenous regressors
 Same per-series Prophet as 06_model_prophet.py, but enriched with exogenous
 drivers that a pure time-series model cannot see on its own:
 

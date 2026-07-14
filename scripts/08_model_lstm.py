@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
-Stage 3 - Step 9: Global LSTM + series embedding forecasting
-============================================================
+Global LSTM + series embedding forecasting
 One global LSTM trained across ALL series (pooled), with a learned embedding
 per series. 12-month window -> predict next month. Recursive 3-month forecast
 on the representative subset (no leakage: future window values come from prior

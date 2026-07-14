@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
-Stage 3 - Step 8: ARIMA baseline forecasting
-============================================
+ARIMA baseline forecasting
 Per-series ARIMA on a representative subset (top-30 by total sales, among the
 series that appear in BOTH sales_filtered_24m & analysis_input, matched by
 series_name because the two tables use different platform series_id spaces).
@@ -39,7 +38,7 @@ TEST_STYLE = "#F58518"
 FC_STYLE = "#54A24B"
 
 
-# ---------- metrics ----------
+# metrics
 def metrics(y_true, y_pred):
     y_true = np.asarray(y_true, dtype=float)
     y_pred = np.asarray(y_pred, dtype=float)
@@ -51,11 +50,11 @@ def metrics(y_true, y_pred):
     return {"MAE": mae, "RMSE": rmse, "MAPE": mape, "WMAPE": wmape}
 
 
-# ---------- representative subset (deterministic, reused by all stage-3 scripts) ----------
+# representative subset (deterministic, reused by all stage-3 scripts)
 import _subset  # shared stratified ~150-series subset (replaces top-30 representative_subset)
 
 
-# ---------- ARIMA order search ----------
+# ARIMA order search
 def auto_order(train):
     best_aic = np.inf
     best_order = (1, 1, 1)

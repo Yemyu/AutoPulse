@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
 Stage 3 — improvement ④: XGBoost ablation (lag features vs pure features)
-=========================================================================
 Run XGBoost twice on the same 30-series subset, same 3-month holdout:
   (A) FULL      : lag_1/2/3 + roll_mean_3/6 + calendar + static   (baseline)
   (B) NO-LAG    : calendar + static only  (no recent-sales info)

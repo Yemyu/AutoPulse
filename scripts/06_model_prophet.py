@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
-Stage 3 - Step 10 (a): Prophet forecasting on representative subset
-===================================================================
+Prophet forecasting on representative subset
 Per-series Prophet (Facebook) on the same top-30 subset as ARIMA. Horizon=3.
 Prophet auto-handles yearly seasonality (car sales low/high season).
 

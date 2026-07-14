@@ -9,9 +9,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-# ---------------------------------------------------------------------------
 # Paths
-# ---------------------------------------------------------------------------
 BASE_DIR: Path = Path(__file__).resolve().parent.parent
 DATA_DIR: Path = BASE_DIR / "data"
 RAW_DIR: Path = DATA_DIR / "raw"
@@ -25,9 +23,7 @@ NOTEBOOK_DIR: Path = BASE_DIR / "notebook"
 # Ensure output directories exist when settings are imported.
 STAGE4_DIR.mkdir(parents=True, exist_ok=True)
 
-# ---------------------------------------------------------------------------
 # Load .env file (no external dependency needed)
-# ---------------------------------------------------------------------------
 _ENV_FILE: Path = BASE_DIR / "config" / ".env"
 
 
@@ -50,25 +46,19 @@ def _load_env_file(path: Path) -> None:
 
 _load_env_file(_ENV_FILE)
 
-# ---------------------------------------------------------------------------
 # DeepSeek API
-# ---------------------------------------------------------------------------
 DEEPSEEK_API_KEY: str = os.environ.get("DEEPSEEK_API_KEY", "")
 DEEPSEEK_MODEL: str = os.environ.get("DEEPSEEK_MODEL", "deepseek-chat")
 DEEPSEEK_BASE_URL: str = os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com")
 
-# ---------------------------------------------------------------------------
 # LLM call behaviour
-# ---------------------------------------------------------------------------
 LLM_MAX_RETRIES: int = int(os.environ.get("LLM_MAX_RETRIES", "3"))
 LLM_REQUEST_TIMEOUT: int = int(os.environ.get("LLM_REQUEST_TIMEOUT", "60"))
 LLM_BATCH_SIZE: int = int(os.environ.get("LLM_BATCH_SIZE", "50"))
 LLM_MAX_TOKENS: int = int(os.environ.get("LLM_MAX_TOKENS", "512"))
 LLM_TEMPERATURE: float = float(os.environ.get("LLM_TEMPERATURE", "0.1"))
 
-# ---------------------------------------------------------------------------
 # ABSA (Aspect-Based Sentiment Analysis)
-# ---------------------------------------------------------------------------
 ABSA_ASPECTS: list[str] = [
     "appearance",      # 外观
     "interior",        # 内饰

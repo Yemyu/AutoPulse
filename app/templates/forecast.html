@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% set title='销量预测' %}
+{% set title_key='fc_title' %}
+{% block lead %}
+<p class="lead-text" data-i18n="fc_lead">对比多种模型在 150 个车系评估集上的体积加权 WMAPE，并展示最优模型的预测效果。</p>
+{% endblock %}
+{% block content %}
+  <div class="grid-2">
+    <div class="card">
+      <h3 data-i18n="fc_model_cmp">模型对比（体积加权 WMAPE，越低越好）</h3>
+      <p class="conclusion" id="fc-concl"></p>
+      <div id="chartModels" class="chart"></div>
+      <p class="source" data-i18n="fc_source_mc">数据来源：data/processed/stage3/model_comparison.csv</p>
+    </div>
+
+    <div class="card">
+      <h3 data-i18n="fc_features">特征重要性（Top 12）</h3>
+      <p class="insight" id="fc-feat-insight"></p>
+      <div id="chartFeatures" class="chart"></div>
+      <p class="source" data-i18n="fc_source_abl">数据来源：data/processed/stage3/xgb_ablation.csv</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3 data-i18n="fc_scatter">预测 vs 实际散点图</h3>
+      <p class="insight" data-i18n="fc_scatter_insight">每个点代表一个车系月的预测值与实际值。点越靠近对角线，模型预测越准确；偏离对角线的点是模型预测误差较大的样本。</p>
+      <div id="chartScatter" class="chart tall"></div>
+      <p class="source" data-i18n="fc_source_preds"></p>
+    </div>
+
+    <div class="card">
+      <h3 data-i18n="fc_class_wmape">按车型级别的预测误差对比</h3>
+      <p class="insight" data-i18n="fc_class_insight">对比 SUV、轿车、MPV 三类车型的体积加权 WMAPE，评估模型在不同车型级别上的预测表现差异。</p>
+      <div id="chartClass" class="chart tall"></div>
+      <p class="source" data-i18n="fc_source_preds"></p>
+    </div>
+  </div>
+{% endblock %}
+{% block scripts %}
+<script>
+var T = window.AUTOPULSE;
+var chartModels, chartFeatures, chartScatter, chartClass;
+
+function renderForecast() {
+  loadJSON('forecast').then(function (d) {
+    document.getElementById('fc-concl').textContent = d.conclusion[window.AUTOPULSE.lang] || d.conclusion.zh;
+
+    var models = d.models.slice().sort(function (a, b) { return b.wmape_vol - a.wmape_vol; });
+    if (!chartModels) chartModels = initChart('chartModels');
+    chartModels.setOption({
+      tooltip: Object.assign({ trigger: 'axis', axisPointer: { type: 'shadow' } }, tooltipStyle()),
+      grid: baseGrid({ top: 24, right: 72 }),
+      xAxis: Object.assign({ type: 'value', name: window.I18N.get('fc_axis_wmape'), nameLocation: 'middle', nameGap: 24 }, axisStyle()),
+      yAxis: Object.assign({ type: 'category', data: models.map(function (m) { return m.name; }) }, axisStyle()),
+      series: [{
+        type: 'bar',
+        data: models.map(function (m) { return { value: m.wmape_vol, itemStyle: { color: m.color, borderRadius: [0, 4, 4, 0] } }; }),
+        label: { show: true, position: 'right', color: T.text, formatter: '{c}%' }
+      }]
+    }, true);
+
+    if (d.features && d.features.length) {
+      document.getElementById('fc-feat-insight').textContent = d.feature_insight[window.AUTOPULSE.lang] || d.feature_insight.zh;
+      if (!chartFeatures) chartFeatures = initChart('chartFeatures');
+      chartFeatures.setOption({
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' },
+          formatter: function (params) {
+            var p = params[0];
+            var f = d.features[d.features.length - 1 - p.dataIndex];
+            var desc = window.AUTOPULSE.lang === 'en' ? f.desc_en : f.desc_zh;
+            return '<b>' + p.name + '</b><br/>importance: ' + p.value + (desc ? '<br/>' + desc : '');
+          }
+        },
+        grid: baseGrid({ left: 120, top: 24, right: 72 }),
+        xAxis: Object.assign({ type: 'value' }, axisStyle()),
+        yAxis: Object.assign({ type: 'category', data: d.features.map(function (f) { return nameFromAspect(f); }).reverse() }, axisStyle()),
+        series: [{
+          type: 'bar',
+          data: d.features.map(function (f, i) { return { value: f.importance, itemStyle: { color: T.palette[i % T.palette.length], borderRadius: [0, 4, 4, 0] } }; }).reverse(),
+          label: { show: true, position: 'right', color: T.text }
+        }]
+      }, true);
+    }
+
+    if (d.scatter && d.scatter.length) {
+      if (!chartScatter) chartScatter = initChart('chartScatter');
+      var maxVal = Math.max.apply(null, d.scatter.map(function(p){return Math.max(p[0],p[1]);}));
+      chartScatter.setOption({
+        tooltip: { trigger: 'item', formatter: function(p){ return window.I18N.get('fc_legend_actual') + ': ' + p.data[0] + '<br>' + window.I18N.get('fc_legend_pred') + ': ' + p.data[1]; } },
+        grid: baseGrid({ top: 24, bottom: 40, left: 56, right: 56 }),
+        xAxis: Object.assign({ type: 'value', name: window.I18N.get('fc_legend_actual'), nameLocation: 'middle', nameGap: 24, min: 0, max: maxVal }, axisStyle()),
+        yAxis: Object.assign({ type: 'value', name: window.I18N.get('fc_legend_pred'), nameLocation: 'middle', nameGap: 44, min: 0, max: maxVal }, axisStyle()),
+        series: [{
+          type: 'scatter', data: d.scatter, symbolSize: 5,
+          itemStyle: { color: 'rgba(44,123,229,.45)' }
+        }, {
+          type: 'line', data: [[0,0],[maxVal,maxVal]], symbol: 'none',
+          lineStyle: { color: T.muted, type: 'dashed', width: 1.5 }, silent: true
+        }]
+      }, true);
+    }
+
+    if (d.class_wmape && d.class_wmape.length) {
+      if (!chartClass) chartClass = initChart('chartClass');
+      chartClass.setOption({
+        tooltip: Object.assign({ trigger: 'axis', axisPointer: { type: 'shadow' } }, tooltipStyle()),
+        grid: baseGrid({ top: 24, right: 72 }),
+        xAxis: Object.assign({ type: 'value', name: 'WMAPE (%)', nameLocation: 'middle', nameGap: 24 }, axisStyle()),
+        yAxis: Object.assign({ type: 'category', data: d.class_wmape.map(function(x){return x.category;}) }, axisStyle()),
+        series: [{
+          type: 'bar',
+          data: d.class_wmape.map(function(x, i) { return { value: x.wmape, itemStyle: { color: T.palette[i % T.palette.length], borderRadius: [0, 4, 4, 0] } }; }),
+          label: { show: true, position: 'right', color: T.text, formatter: '{c}%' }
+        }]
+      }, true);
+    }
+  });
+}
+renderForecast();
+window.__renderers.renderForecast = renderForecast;
+</script>
+{% endblock %}

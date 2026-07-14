@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
-Stage 3 - Step 10 (b): XGBoost monthly sales forecasting
-========================================================
+XGBoost monthly sales forecasting
 Monthly-level model. Joins static config+sentiment features (from
 analysis_input, by series_name) onto monthly sales, adds calendar +
 lag/rolling features. Recursive 3-month forecast on the representative

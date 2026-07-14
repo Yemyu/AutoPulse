@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
 舆情数据清洗与三表对齐
-======================
 读取 sentiment_reviews.csv (明细) + sales.csv (销量) + vehicles.csv (配置),
 产出分析就绪表 data/sentiment/analysis_input.csv (一行一车系):
 

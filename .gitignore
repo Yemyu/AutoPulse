@@ -46,7 +46,16 @@ logs/
 # Reference (third-party code)
 reference/
 
-# 数据文档: 数据 README 入库跟踪; 质量报告可复现, 不入库
-# (由 scripts/03_build_sentiment_summary.py 生成到 docs/)
-docs/data_quality_report.json
-docs/data_quality_report.md
+# docs/ 不入库（部署/规划文档为本地参考，不进仓库）
+docs/
+
+# 本地验证/调试截图, 不提交
+figures/verify_*.png
+figures/test_*.png
+figures/present_*.png
+
+# 临时脚本与静态导出产物
+/_*.py
+export_static.py
+site/
+docs/site/

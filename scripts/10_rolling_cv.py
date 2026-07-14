@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
 Stage 3 — improvement ②: Rolling-origin / multi-horizon validation
-==================================================================
 Evaluate ARIMA / XGBoost / LSTM at horizons = 3/6/9/12 months on the SAME
 30-series representative subset used by the baseline.
 
@@ -54,7 +53,7 @@ np.random.seed(SEED)
 torch.manual_seed(SEED)
 
 
-# ---------- shared helpers ----------
+# shared helpers
 def metrics(y_true, y_pred):
     y_true = np.asarray(y_true, dtype=float)
     y_pred = np.asarray(y_pred, dtype=float)
@@ -83,7 +82,7 @@ def auto_order(train):
     return best
 
 
-# ---------- ARIMA (per-series, cheap) ----------
+# ARIMA (per-series, cheap)
 def arima_cv(subset, sales):
     out = {}
     for h in HORIZONS:
@@ -105,7 +104,7 @@ def arima_cv(subset, sales):
     return out
 
 
-# ---------- XGBoost (train once, forecast each h) ----------
+# XGBoost (train once, forecast each h)
 STATIC_NUM = ["official_price_wan", "avg_rating", "positive_ratio", "negative_ratio", "review_count"]
 STATIC_CAT = ["energy_type", "vehicle_class", "brand"]
 LAG_COLS = ["lag_1", "lag_2", "lag_3", "roll_mean_3", "roll_mean_6"]
@@ -193,7 +192,7 @@ def xgb_cv(subset, sales, feat):
     return out
 
 
-# ---------- LSTM (global, train once) ----------
+# LSTM (global, train once)
 def msin(m): return np.sin(2 * np.pi * m / 12.0)
 def mcos(m): return np.cos(2 * np.pi * m / 12.0)
 

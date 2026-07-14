@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
 Stage 3 — improvement ⑤: Prediction intervals & coverage
-=========================================================
 Give every model a 90% prediction interval (nominal) on the SAME 3-month
 holdout of the 30-series subset, then measure:
   PICP  (Prediction Interval Coverage Probability) = fraction of actuals
@@ -107,7 +106,7 @@ def picp_mpiw(actual, lower, upper):
     return inside, width, width_pct
 
 
-# ---------- ARIMA ----------
+# ARIMA
 def arima_pi(subset, sales):
     al, au, ap, aa = [], [], [], []
     for name in subset:
@@ -130,7 +129,7 @@ def arima_pi(subset, sales):
     return np.array(aa), np.array(ap), np.array(al), np.array(au)
 
 
-# ---------- Prophet ----------
+# Prophet
 def prophet_pi(subset, sales):
     from prophet import Prophet
     aa, ap, al, au = [], [], [], []
@@ -157,7 +156,7 @@ def prophet_pi(subset, sales):
     return np.array(aa), np.array(ap), np.array(al), np.array(au)
 
 
-# ---------- XGBoost (quantile) ----------
+# XGBoost (quantile)
 def xgb_pi(subset, sales, feat):
     sales = sales.copy(); sales["series_name"] = sales["series_name"].astype(str)
     feat = feat.copy(); feat["series_name"] = feat["series_name"].astype(str)
@@ -210,7 +209,7 @@ def xgb_pi(subset, sales, feat):
     return np.array(aa), np.array(ap), np.array(al), np.array(au)
 
 
-# ---------- LSTM (residual sigma) ----------
+# LSTM (residual sigma)
 def msin(m): return np.sin(2 * np.pi * m / 12.0)
 def mcos(m): return np.cos(2 * np.pi * m / 12.0)
 

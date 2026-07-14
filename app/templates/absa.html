@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% set title='舆情 ABSA' %}
+{% set title_key='ab_title' %}
+{% block lead %}
+<p class="lead-text" data-i18n="ab_lead">10 维度细粒度情感分析（外观、内饰、空间、动力、操控、舒适、油耗、配置、智能化、性价比），分数范围 −1~1。</p>
+{% endblock %}
+{% block content %}
+  <p class="conclusion" id="ab-concl"></p>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3 data-i18n="ab_trend">十维度月度情感走势</h3>
+      <p class="insight" data-i18n="ab_trend_insight">折线展示各维度情感分随时间的变化，可观察哪些维度的口碑在改善、哪些在恶化。</p>
+      <div id="chartTrend" class="chart"></div>
+      <p class="source" data-i18n="ab_source_trend"></p>
+    </div>
+    <div class="card">
+      <h3 data-i18n="ab_bar">各维度平均情感分</h3>
+      <p class="insight" data-i18n="ab_bar_insight">平均分是 0~1 的"水温计"，高于 0 代表整体正面，低于 0 代表车主集中吐槽。</p>
+      <div id="chartBar" class="chart"></div>
+      <p class="source" data-i18n="ab_source"></p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3 data-i18n="ab_dist">情感正负分布（正/中/负）</h3>
+      <p class="insight" data-i18n="ab_dist_insight">堆叠图展示每个维度下正面、中性、负面评论占比，看出情绪“两极分化”程度。</p>
+      <div id="chartDist" class="chart tall"></div>
+      <p class="source" data-i18n="ab_source">数据来源：data/processed/stage4/sentiment_sales_monthly.csv</p>
+    </div>
+    <div class="card">
+      <h3 data-i18n="ab_variance">各维度情感波动（标准差）</h3>
+      <p class="insight" data-i18n="ab_var_insight">波动越大，说明车主在该维度上分歧越大：有人夸爆、有人骂惨。</p>
+      <div id="chartVar" class="chart tall"></div>
+      <p class="source" data-i18n="ab_source">数据来源：data/processed/stage4/sentiment_sales_monthly.csv</p>
+    </div>
+  </div>
+{% endblock %}
+{% block scripts %}
+<script>
+var T = window.AUTOPULSE;
+var chartTrend, chartBar, chartDist, chartVar;
+
+function renderABSA() {
+  loadJSON('absa').then(function (d) {
+    document.getElementById('ab-concl').textContent = d.conclusion[window.AUTOPULSE.lang] || d.conclusion.zh;
+
+    var aspects = d.aspects;
+    var labels = aspects.map(function (a) { return nameFromAspect(a); });
+    var vals = aspects.map(function (a) { return a.avg; });
+
+    // 月度维度走势折线图
+    if (d.monthly_trends && d.monthly_trends.months && d.monthly_trends.months.length) {
+      if (!chartTrend) chartTrend = initChart('chartTrend');
+      var mt = d.monthly_trends;
+      chartTrend.setOption({
+        tooltip: Object.assign({ trigger: 'axis' }, tooltipStyle()),
+        legend: { data: mt.series.map(function(s){ return window.AUTOPULSE.lang==='en' ? s.name_en : s.name_zh; }), top: 10, textStyle: { color: T.muted, fontSize: 10 } },
+        grid: baseGrid({ top: 48, bottom: 40 }),
+        xAxis: Object.assign({ type: 'category', data: mt.months, axisLabel: { interval: Math.floor(mt.months.length/8) } }, axisStyle()),
+        yAxis: Object.assign({ type: 'value', min: -1, max: 1 }, axisStyle()),
+        series: mt.series.map(function(s, i) {
+          return {
+            name: window.AUTOPULSE.lang==='en' ? s.name_en : s.name_zh,
+            type: 'line', data: s.data, smooth: true,
+            symbol: 'none',
+            lineStyle: { width: 1.5 },
+            itemStyle: { color: T.palette[i % T.palette.length] }
+          };
+        })
+      }, true);
+    }
+
+    if (!chartBar) chartBar = initChart('chartBar');
+    chartBar.setOption({
+      tooltip: Object.assign({ trigger: 'axis', axisPointer: { type: 'shadow' } }, tooltipStyle()),
+      grid: baseGrid({ top: 40, bottom: 86 }),
+      xAxis: Object.assign({ type: 'category', data: labels, axisLabel: { rotate: 30, interval: 0 } }, axisStyle()),
+      yAxis: Object.assign({ type: 'value', name: window.I18N.get('ab_axis_sentiment'), min: -1, max: 1 }, axisStyle()),
+      series: [{
+        type: 'bar',
+        data: vals.map(function (v, i) { return { value: v, itemStyle: { color: v >= 0 ? T.sentimentPos : T.sentimentNeg, borderRadius: v >= 0 ? [4, 4, 0, 0] : [0, 0, 4, 4] } }; })
+      }]
+    }, true);
+
+    if (!chartDist) chartDist = initChart('chartDist');
+    chartDist.setOption({
+      tooltip: Object.assign({ trigger: 'axis', axisPointer: { type: 'shadow' } }, tooltipStyle()),
+      legend: { data: [window.I18N.get('ab_pos'), window.I18N.get('ab_neu'), window.I18N.get('ab_neg')], top: 10, textStyle: { color: T.muted } },
+      grid: baseGrid({ top: 48, bottom: 86 }),
+      xAxis: Object.assign({ type: 'category', data: labels, axisLabel: { rotate: 30, interval: 0 } }, axisStyle()),
+      yAxis: Object.assign({ type: 'value', name: 'ratio', max: 1 }, axisStyle()),
+      series: [
+        { name: window.I18N.get('ab_pos'), type: 'bar', stack: 'total', data: d.distribution.map(function (x) { return x.positive; }), itemStyle: { color: T.sentimentPos } },
+        { name: window.I18N.get('ab_neu'), type: 'bar', stack: 'total', data: d.distribution.map(function (x) { return x.neutral; }), itemStyle: { color: T.sentimentNeu } },
+        { name: window.I18N.get('ab_neg'), type: 'bar', stack: 'total', data: d.distribution.map(function (x) { return x.negative; }), itemStyle: { color: T.sentimentNeg } }
+      ]
+    }, true);
+
+    if (!chartVar) chartVar = initChart('chartVar');
+    chartVar.setOption({
+      tooltip: Object.assign({ trigger: 'axis', axisPointer: { type: 'shadow' } }, tooltipStyle()),
+      grid: baseGrid({ top: 24, bottom: 86 }),
+      xAxis: Object.assign({ type: 'category', data: labels, axisLabel: { rotate: 30, interval: 0 } }, axisStyle()),
+      yAxis: Object.assign({ type: 'value', name: 'std' }, axisStyle()),
+      series: [{
+        type: 'line',
+        data: d.variance.map(function (x) { return x.std; }),
+        smooth: true,
+        itemStyle: { color: T.accent },
+        areaStyle: { color: 'rgba(0,169,174,.12)' }
+      }]
+    }, true);
+  });
+}
+renderABSA();
+window.__renderers.renderABSA = renderABSA;
+</script>
+{% endblock %}

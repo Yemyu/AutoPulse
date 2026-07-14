@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% set title='舆情预警' %}
+{% set title_key='al_title' %}
+{% block lead %}
+<p class="lead-text" data-i18n="al_lead">基于规则识别口碑明显恶化的车系，作为声誉风险监测入口。</p>
+{% endblock %}
+{% block content %}
+  <p class="conclusion" id="al-concl"></p>
+  <p class="source" style="margin:0 0 14px;border:none;padding:0;" id="al-rule-text"></p>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3 data-i18n="al_trend">预警月度趋势</h3>
+      <p class="insight" data-i18n="al_trend_insight">趋势图定位口碑危机集中爆发的月份，帮助判断是偶发事件还是系统性恶化。</p>
+      <div id="chartTrend" class="chart"></div>
+    </div>
+    <div class="card">
+      <h3 data-i18n="al_risk">风险等级分布</h3>
+      <p class="insight" data-i18n="al_risk_insight">按综合情感分把预警划分为高/中/低三档，优先关注高危车系。</p>
+      <div id="chartRisk" class="chart"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 data-i18n="al_list">预警车系列表</h3>
+    <p class="insight" data-i18n="al_list_insight">明细列出触发规则的具体车系、月份与情感变化，可直接用于运营侧跟进。</p>
+    <div class="tbl-wrap">
+      <table class="tbl" id="alertTbl">
+        <thead>
+          <tr>
+            <th data-i18n="al_tbl_brand">品牌</th>
+            <th data-i18n="al_tbl_series">车系</th>
+            <th data-i18n="al_tbl_period">月份</th>
+            <th data-i18n="al_tbl_overall">综合情感</th>
+            <th data-i18n="al_tbl_drop">环比下降</th>
+          </tr>
+        </thead>
+        <tbody id="alertBody"></tbody>
+      </table>
+    </div>
+    <p class="source" data-i18n="al_source"></p>
+  </div>
+{% endblock %}
+{% block scripts %}
+<script>
+var T = window.AUTOPULSE;
+var chartTrend, chartRisk;
+
+function renderAlerts() {
+  loadJSON('alerts').then(function (d) {
+    document.getElementById('al-concl').textContent = d.conclusion[window.AUTOPULSE.lang] || d.conclusion.zh;
+    document.getElementById('al-rule-text').textContent = d.rule[window.AUTOPULSE.lang] || d.rule.zh;
+
+    if (!chartTrend) chartTrend = initChart('chartTrend');
+    chartTrend.setOption({
+      tooltip: tooltipStyle(),
+      grid: baseGrid({ top: 48 }),
+      xAxis: Object.assign({ type: 'category', data: d.monthly.map(function (x) { return x.month; }) }, axisStyle()),
+      yAxis: Object.assign({ type: 'value', minInterval: 1 }, axisStyle()),
+      series: [{
+        type: 'line',
+        data: d.monthly.map(function (x) { return x.count; }),
+        itemStyle: { color: T.warn },
+        areaStyle: { color: 'rgba(246,195,67,.18)' },
+        smooth: true,
+        markPoint: { data: [{ type: 'max', name: 'max' }], symbolOffset: [0, 10] }
+      }]
+    }, true);
+
+    var riskMap = { '高危': T.sentimentNeg, '中危': T.warn, '低危': T.sentimentPos,
+                  'High': T.sentimentNeg, 'Medium': T.warn, 'Low': T.sentimentPos };
+    var riskLabel = {'高危': 'al_risk_high', '中危': 'al_risk_mid', '低危': 'al_risk_low'};
+    if (!chartRisk) chartRisk = initChart('chartRisk');
+    chartRisk.setOption({
+      tooltip: { trigger: 'item' },
+      legend: { orient: 'vertical', right: 10, top: 'center', textStyle: { color: T.muted } },
+      series: [{
+        type: 'pie',
+        radius: ['42%', '68%'],
+        center: ['38%', '55%'],
+        data: d.risk_dist.map(function (x) {
+          return { name: window.I18N.get(riskLabel[x.level] || x.level), value: x.count, itemStyle: { color: riskMap[x.level] || T.palette[0] } };
+        }),
+        label: { color: T.text, formatter: '{b}\n{c} ({d}%)' }
+      }]
+    }, true);
+
+    var tbody = document.getElementById('alertBody');
+    tbody.innerHTML = '';
+    d.alerts.forEach(function (a) {
+      var tr = document.createElement('tr');
+      var brandDisplay = (window.AUTOPULSE.lang === 'en' && a.brand_en) ? a.brand_en : a.brand;
+      var seriesDisplay = (window.AUTOPULSE.lang === 'en' && a.series_en) ? a.series_en : a.series_name;
+      tr.innerHTML = '<td>' + brandDisplay + '</td>' +
+                     '<td>' + seriesDisplay + '</td>' +
+                     '<td>' + a.period + '</td>' +
+                     '<td>' + a.overall.toFixed(2) + '</td>' +
+                     '<td class="neg">' + a.overall_drop.toFixed(2) + '</td>';
+      tbody.appendChild(tr);
+    });
+  });
+}
+renderAlerts();
+window.__renderers.renderAlerts = renderAlerts;
+</script>
+{% endblock %}

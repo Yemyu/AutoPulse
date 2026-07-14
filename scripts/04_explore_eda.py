@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Stage 2: Data Filtering & Exploratory Visualization
-(Step 3 / Step 7 / Step 13 of the project plan)
 
 Inputs (prepared in Stage 1):
   data/raw/sales.csv      - monthly sales (33,845 rows / 1,122 series)
@@ -33,7 +32,7 @@ os.makedirs(FIG, exist_ok=True)
 
 MIN_RUN = 24
 
-# ---------- Clean, publication-ready style (English-only to avoid font issues) ----------
+# Clean, publication-ready style (English-only to avoid font issues)
 plt.rcParams.update({
     'font.family': 'sans-serif',
     'font.sans-serif': ['DejaVu Sans', 'Arial', 'Helvetica', 'sans-serif'],
@@ -66,7 +65,7 @@ COLORS = {
     'gray': '#8D99AE',
 }
 
-# ---------- Load data ----------
+# Load data
 sales = pd.read_csv(os.path.join(RAW, 'sales.csv'))
 vehicles = pd.read_csv(os.path.join(RAW, 'vehicles.csv'))
 sales['period'] = sales['year'] * 12 + (sales['month'] - 1)
@@ -114,8 +113,8 @@ def runs_info(periods):
     return longest, n_interrupt, longest_gap, len(p)
 
 
-# ---------- Step 13: full time-series summary ----------
-print('[Step 13] Computing full time-series summary ...')
+# full time-series summary
+print('Computing full time-series summary ...')
 summary_rows = []
 for sid, g in sales.groupby('series_id'):
     longest, nint, gap, total = runs_info(g['period'].values)
@@ -135,17 +134,17 @@ summary = pd.DataFrame(summary_rows).sort_values('longest_run_months', ascending
 summary.to_csv(os.path.join(PROC, 'timeseries_summary.csv'), index=False, encoding='utf-8-sig')
 print(f'          Total series: {len(summary)}; written to timeseries_summary.csv')
 
-# ---------- Step 3: filter series with >=24 consecutive months ----------
+# filter series with >=24 consecutive months
 qualified = summary[summary['longest_run_months'] >= MIN_RUN]['series_id'].tolist()
-print(f'[Step 3]  Series with >= {MIN_RUN} consecutive months: {len(qualified)}')
+print(f'Series with >= {MIN_RUN} consecutive months: {len(qualified)}')
 filt = sales[sales['series_id'].isin(qualified)].copy()
 filt.to_csv(os.path.join(PROC, 'sales_filtered_24m.csv'), index=False, encoding='utf-8-sig')
 print(f'          Filtered dataset: {len(filt)} rows; written to sales_filtered_24m.csv')
 
 veh_filt = vehicles[vehicles['series_id'].isin(qualified)].drop_duplicates('series_id')
 
-# ---------- Step 7-1: Sales trend chart ----------
-print('[Step 7-1] Sales trend chart ...')
+# Sales trend chart
+print('Sales trend chart ...')
 mt = filt.groupby('date')['monthly_sales'].sum().reset_index()
 mt = mt.sort_values('date')
 mt['rolling_12m'] = mt['monthly_sales'].rolling(window=12, min_periods=1).mean()
@@ -164,8 +163,8 @@ fig.tight_layout()
 fig.savefig(os.path.join(FIG, 'sales_trend.png'), dpi=150, bbox_inches='tight')
 plt.close(fig)
 
-# ---------- Step 7-2: Category distribution chart ----------
-print('[Step 7-2] Category distribution chart ...')
+# Category distribution chart
+print('Category distribution chart ...')
 cat = filt.groupby('category_en')['series_id'].nunique().sort_values(ascending=False)
 vclass = veh_filt['vehicle_class_en'].value_counts().sort_values(ascending=False)
 
@@ -204,8 +203,8 @@ fig.tight_layout()
 fig.savefig(os.path.join(FIG, 'category_distribution.png'), dpi=150, bbox_inches='tight')
 plt.close(fig)
 
-# ---------- Step 7-3: Hardware feature distributions ----------
-print('[Step 7-3] Hardware feature distributions ...')
+# Hardware feature distributions
+print('Hardware feature distributions ...')
 fig, axes = plt.subplots(2, 2, figsize=(13, 9))
 
 # Price

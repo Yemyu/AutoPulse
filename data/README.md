@@ -4,8 +4,8 @@
 
 # 数据 README
 
-> 本项目全部数据文档的单一来源。原 `docs/数据说明.md` 与 `data/sentiment/data_quality_report.md`
-> 已合并至此文件，避免分散与重复。数据均来自公开爬虫（见根目录 `README.md` 的「数据来源与采集」），
+> 本项目全部数据文档的单一来源。原 `data/sentiment/data_quality_report.md`
+> 已并入本文件，避免分散与重复。数据均来自公开爬虫（见根目录 `README.md` 的「数据来源与采集」），
 > 可用 `scripts/` 下的脚本复现。
 
 ## 项目数据全景
@@ -322,7 +322,7 @@ vehicles ———— series_id ———— series_mapping ———— series_
 | `data/sentiment/sentiment_summary.csv` | 490 车系 | — | 车系级情感聚合指标 |
 | `data/README.md` 第八章 | — | — | 覆盖与质量报告（已并入本数据文档） |
 
-> 重新生成汇总 / 质量报告：`python scripts/03_build_sentiment_summary.py`（读取 `sentiment_reviews.csv`，输出 `sentiment_summary.csv` 至 `data/sentiment/`，并输出 `data_quality_report.json` / `.md` 至 `docs/`，可重新生成）。
+> 重新生成汇总 / 质量报告：`python scripts/03_build_sentiment_summary.py`（读取 `sentiment_reviews.csv`，输出 `sentiment_summary.csv` 与 `data_quality_report.json` / `.md` 至 `data/sentiment/`，可重新生成）。
 
 ### 采集范围（2026-07-10 完成全量采集）
 
@@ -433,7 +433,7 @@ sales    ──series_id──┘
 ## 八、舆情数据质量与覆盖报告（完整版）
 
 > 本报告的原始生成逻辑见 `scripts/03_build_sentiment_summary.py`，重新运行会输出
-> `docs/data_quality_report.json` 与 `docs/data_quality_report.md`（可复现）。以下为合并进本数据文档的快照。
+> `data_quality_report.json` 与 `data_quality_report.md` 至 `data/sentiment/`（可复现）。以下为合并进本数据文档的快照。
 
 - 总评论数: **40,054**
 - 覆盖车系: **490**
@@ -552,3 +552,14 @@ sales    ──series_id──┘
 | 福田 | 1 | 4 | 2.72 |
 | 灵悉 | 1 | 3 | 3.83 |
 | 东风富康 | 1 | 1 | 3.50 |
+
+## 九、阶段六看板数据桥
+
+阶段六网页看板（`app/`）本身不产生原始数据，而是读取前文介绍的各类 CSV，由 `app/build_dashboard_data.py` 预烘焙成 JSON 数据桥，供前端 ECharts 直接渲染：
+
+- 输入：`data/processed/stage3/`、`data/processed/stage4/`、`data/processed/stage5/` 及 `data/sentiment/` 下的产物。
+- 输出：`app/static/data/*.json`（overview、forecast、absa、attribution、relation、alerts、drilldown）。
+- 运行：`python app/build_dashboard_data.py` 可重新生成；`python app/app.py` 启动看板。
+
+这些 JSON 文件已预烘焙并随代码提交，因此看板在本地或 GitHub Pages 静态部署时无需重新跑数据流水线。
+

@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% set title='销量归因' %}
+{% set title_key='at_title' %}
+{% block lead %}
+<p class="lead-text" data-i18n="at_lead">用车系级 XGBoost+SHAP 回答「哪些舆情维度真正影响销量」。</p>
+{% endblock %}
+{% block content %}
+  <p class="conclusion" id="at-concl"></p>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3 data-i18n="at_shap">舆情维度对销量的 SHAP 重要性</h3>
+      <p class="insight" data-i18n="at_shap_insight">SHAP 值回答“某个维度让预测变准还是变不准”。条越长，该维度对销量解释力越强。</p>
+      <div id="chartShap" class="chart"></div>
+      <p class="source" data-i18n="at_source_shap">数据来源：data/processed/stage4/aspect_shap_ranking.csv</p>
+    </div>
+    <div class="card">
+      <h3 data-i18n="at_cmp_title">加入舆情特征后的归因提升</h3>
+      <p class="insight" data-i18n="at_cmp_insight">对比“含舆情”和“不含舆情”两套模型的 R²/MAPE，量化舆情对销量归因的真实贡献。</p>
+      <div id="cmpRow"></div>
+      <p class="source" data-i18n="at_source_metr">数据来源：data/processed/stage4/attribution_metrics.csv</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3><span data-i18n="at_example">归因示例：预测误差最小的车系</span><span id="exName"></span></h3>
+    <p class="insight" data-i18n="at_example_insight">展示模型拟合最好的车系，蓝色线为实际销量，橙色线为预测，红色柱为绝对误差。</p>
+    <div id="chartExample" class="chart wide"></div>
+    <p class="source" data-i18n="fc_source_preds">数据来源：data/processed/stage3/xgboost_preds.csv</p>
+  </div>
+{% endblock %}
+{% block scripts %}
+<script>
+var T = window.AUTOPULSE;
+var chartShap, chartExample;
+
+function renderAttribution() {
+  loadJSON('attribution').then(function (d) {
+    document.getElementById('at-concl').textContent = d.conclusion[window.AUTOPULSE.lang] || d.conclusion.zh;
+
+    var shap = d.shap.slice().sort(function (a, b) { return a.importance - b.importance; });
+    if (!chartShap) chartShap = initChart('chartShap');
+    chartShap.setOption({
+      tooltip: Object.assign({ trigger: 'axis', axisPointer: { type: 'shadow' } }, tooltipStyle()),
+      grid: baseGrid({ left: 64, top: 24 }),
+      xAxis: Object.assign({ type: 'value', name: window.I18N.get('at_axis_shap') }, axisStyle()),
+      yAxis: Object.assign({ type: 'category', data: shap.map(function (s) { return nameFromAspect(s); }) }, axisStyle()),
+      series: [{
+        type: 'bar',
+        data: shap.map(function (s) { return { value: s.importance, itemStyle: { color: s.color, borderRadius: [0, 4, 4, 0] } }; }),
+        label: { show: true, position: 'right', color: T.text }
+      }]
+    }, true);
+
+    var w = d.comparison.with, wo = d.comparison.without;
+    var rows = [
+      [window.I18N.get('at_label_r2'), wo ? wo.r2 : 0, w ? w.r2 : 0, true],
+      [window.I18N.get('at_label_mape'), wo ? wo.mape : 0, w ? w.mape : 0, false]
+    ];
+    var html = '<div class="metric-row">';
+    rows.forEach(function (r) {
+      var better = r[3] ? (r[2] > r[1]) : (r[2] < r[1]);
+      var color = better ? T.sentimentPos : T.sentimentNeg;
+      html += '<div class="metric-box">' +
+              '<div class="label">' + r[0] + '</div>' +
+              '<div class="value-row">' + window.I18N.get('at_label_without') + ' <b>' + r[1].toFixed(3) + '</b> &nbsp;→&nbsp; ' + window.I18N.get('at_label_with') + ' <b style="color:' + color + '">' + r[2].toFixed(3) + '</b></div>' +
+              '<div class="note">' + (better ? window.I18N.get('at_better') : window.I18N.get('at_worse')) + '</div>' +
+              '</div>';
+    });
+    html += '</div>';
+    document.getElementById('cmpRow').innerHTML = html;
+
+    if (d.top_example) {
+      document.getElementById('exName').textContent = ' — ' + d.top_example.series;
+      if (!chartExample) chartExample = initChart('chartExample');
+      chartExample.setOption({
+        tooltip: tooltipStyle(),
+        legend: { data: [window.I18N.get('at_legend_actual'), window.I18N.get('at_legend_pred'), window.I18N.get('at_legend_error')], top: 10, textStyle: { color: T.muted } },
+        grid: baseGrid({ top: 48 }),
+        xAxis: Object.assign({ type: 'category', data: d.top_example.dates }, axisStyle()),
+        yAxis: Object.assign({ type: 'value', name: window.I18N.get('fc_axis_sales') }, axisStyle()),
+        series: [
+          { name: window.I18N.get('at_legend_actual'), type: 'line', data: d.top_example.actual, itemStyle: { color: T.sentimentPos }, smooth: true },
+          { name: window.I18N.get('at_legend_pred'), type: 'line', data: d.top_example.pred, itemStyle: { color: T.primary }, smooth: true, lineStyle: { type: 'dashed' } },
+          { name: window.I18N.get('at_legend_error'), type: 'bar', data: d.top_example.error, itemStyle: { color: 'rgba(238,91,91,.35)' } }
+        ]
+      }, true);
+    }
+  });
+}
+renderAttribution();
+window.__renderers.renderAttribution = renderAttribution;
+</script>
+{% endblock %}

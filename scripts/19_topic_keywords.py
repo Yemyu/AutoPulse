@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
-Stage 5 - Step 2: topic keywords + LDA for top-3 sentiment aspects
-=====================================================================
+topic keywords + LDA for top-3 sentiment aspects
 针对阶段四 SHAP 最重要的三个维度（舒适/性价比/智能），从评论原文中提取
 关键词和 LDA 主题，回答"用户到底在聊什么"。
 

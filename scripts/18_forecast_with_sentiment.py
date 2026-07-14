@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
-Stage 5 - Step 1: sentiment -> sales forecasting fusion
-==========================================================
+sentiment -> sales forecasting fusion
 把阶段四的车系级月度情感序列作为外生特征，融入阶段三的销量预测模型，
 对比"无情感"和"有情感"两版本的预测精度。
 

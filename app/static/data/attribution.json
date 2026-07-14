@@ -1,0 +1,111 @@
+{
+  "shap": [
+    {
+      "key": "comfort",
+      "name_zh": "舒适",
+      "name_en": "Comfort",
+      "importance": 0.3299,
+      "color": "#2c7be5"
+    },
+    {
+      "key": "value",
+      "name_zh": "性价比",
+      "name_en": "Value",
+      "importance": 0.3012,
+      "color": "#00a9ae"
+    },
+    {
+      "key": "intelligence",
+      "name_zh": "智能化",
+      "name_en": "Intelligence",
+      "importance": 0.1872,
+      "color": "#34c38f"
+    },
+    {
+      "key": "configuration",
+      "name_zh": "配置",
+      "name_en": "Config",
+      "importance": 0.1721,
+      "color": "#f6c343"
+    },
+    {
+      "key": "space",
+      "name_zh": "空间",
+      "name_en": "Space",
+      "importance": 0.1653,
+      "color": "#ee5b5b"
+    },
+    {
+      "key": "appearance",
+      "name_zh": "外观",
+      "name_en": "Appearance",
+      "importance": 0.1456,
+      "color": "#a55eea"
+    },
+    {
+      "key": "interior",
+      "name_zh": "内饰",
+      "name_en": "Interior",
+      "importance": 0.0888,
+      "color": "#7783f5"
+    },
+    {
+      "key": "control",
+      "name_zh": "操控",
+      "name_en": "Control",
+      "importance": 0.0794,
+      "color": "#fd7e56"
+    },
+    {
+      "key": "fuel_consumption",
+      "name_zh": "油耗",
+      "name_en": "Fuel",
+      "importance": 0.0488,
+      "color": "#26c6da"
+    },
+    {
+      "key": "power",
+      "name_zh": "动力",
+      "name_en": "Power",
+      "importance": 0.0335,
+      "color": "#95aac9"
+    }
+  ],
+  "comparison": {
+    "with": {
+      "r2": 0.138,
+      "mape": 0.147
+    },
+    "without": {
+      "r2": -0.073,
+      "mape": 0.165
+    }
+  },
+  "top_example": {
+    "series": "创酷",
+    "dates": [
+      "2025-09-01",
+      "2025-10-01",
+      "2025-11-01"
+    ],
+    "actual": [
+      2.0,
+      2.0,
+      1.0
+    ],
+    "pred": [
+      1.9,
+      2.8,
+      2.2
+    ],
+    "error": [
+      0.1,
+      0.8,
+      1.2
+    ]
+  },
+  "conclusion": {
+    "zh": "加入舆情特征后销量归因 R² 由 −0.073 提升至 0.138（+0.211）；SHAP 显示「舒适 > 性价比 > 智能化」是舆情影响销量的关键维度。",
+    "en": "Adding sentiment features lifts sales attribution R² from −0.073 to 0.138 (+0.211); SHAP shows Comfort > Value > Intelligence are the key sentiment drivers of sales."
+  }
+}
