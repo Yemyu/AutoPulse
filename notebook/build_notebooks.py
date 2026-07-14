@@ -468,6 +468,81 @@ print(abl.round(2).to_string(index=False))""",
 # PICP = fraction of actuals captured by the interval; MPIW = mean interval width.
 iv = pd.read_csv(os.path.join(PROC3, 'interval_results.csv'))
 print(iv.round(3).to_string(index=False))""",
+
+    # ---------------- Stage 4 ----------------
+    's4_load': """# Stage 4: load the full ABSA results and the stage-4 attribution tables.
+absa = pd.read_csv(os.path.join(SENTIMENT, 'absa', 'absa_results.csv'))
+print('ABSA results        :', absa.shape, '| series covered:', absa['series_id'].nunique())
+aspects = ['appearance', 'interior', 'space', 'power', 'control', 'comfort',
+           'fuel_consumption', 'configuration', 'intelligence', 'value']
+print('Aspects scored      :', len(aspects))
+print('Reviews with scores :', int(absa['success'].sum()) if 'success' in absa.columns else len(absa))
+print('Overall mean score  : %.3f' % absa[aspects].values.mean())
+
+attr = pd.read_csv(os.path.join(PROC, 'stage4', 'attribution_metrics.csv'))
+shap_rank = pd.read_csv(os.path.join(PROC, 'stage4', 'aspect_shap_ranking.csv'))
+granger_brand = pd.read_csv(os.path.join(PROC, 'stage4', 'granger_brand_summary.csv'))
+granger_mkt = pd.read_csv(os.path.join(PROC, 'stage4', 'granger_market.csv'))
+print('\\nAttribution metrics :', attr.shape)
+print('SHAP ranking rows   :', shap_rank.shape)
+print('Granger brand rows  :', granger_brand.shape)
+print('Granger market rows :', granger_mkt.shape)""",
+
+    's4_absa_dist': """# Mean ABSA score per aspect across the full scored corpus (-1 .. +1).
+means = absa[aspects].mean().sort_values(ascending=False)
+fig, ax = plt.subplots(figsize=(10, 5))
+bar_colors = ['#3E8914' if v >= 0 else '#C73E1D' for v in means.values]
+ax.bar(means.index, means.values, color=bar_colors)
+ax.axhline(0, color='#333333', lw=0.8)
+ax.set_ylabel('mean score')
+ax.set_title('Aspect-Based Sentiment - average score by aspect (full corpus)')
+plt.xticks(rotation=45, ha='right')
+plt.tight_layout(); plt.show()""",
+
+    's4_attr': """# Sales attribution: does sentiment improve forecasting? + SHAP aspect ranking.
+print('=== Attribution: forecasting with vs without sentiment ===')
+print(attr.round(4).to_string(index=False))
+print('\\n=== SHAP mean |SHAP| by aspect (higher = more important for sales) ===')
+sr = shap_rank.rename(columns={'Unnamed: 0': 'aspect'}).sort_values('mean_abs_shap', ascending=False)
+print(sr.round(4).to_string(index=False))
+
+p = os.path.join(FIG, 'stage4_shap_bar.png')
+if os.path.exists(p):
+    img = plt.imread(p); fig, ax = plt.subplots(figsize=(11, 5))
+    ax.imshow(img); ax.axis('off'); plt.tight_layout(); plt.show()""",
+
+    's4_granger': """# Granger causality: does past sentiment predict future sales?
+print('=== Brand-level significance rate by aspect (n brands tested) ===')
+print(granger_brand.round(4).to_string(index=False))
+print('\\n=== Market-level Granger p-values by aspect ===')
+print(granger_mkt.round(4).to_string(index=False))
+
+p = os.path.join(FIG, 'stage4_granger_brand.png')
+if os.path.exists(p):
+    img = plt.imread(p); fig, ax = plt.subplots(figsize=(11, 5))
+    ax.imshow(img); ax.axis('off'); plt.tight_layout(); plt.show()""",
+
+    's4_figs': """# Market-level sentiment vs sales over time.
+p = os.path.join(FIG, 'stage4_market_timeseries.png')
+if os.path.exists(p):
+    img = plt.imread(p); fig, ax = plt.subplots(figsize=(12, 5))
+    ax.imshow(img); ax.axis('off'); plt.tight_layout(); plt.show()""",
+
+    's4_out': """# Stage 4 deliverables summary
+stage4_files = {
+    'ABSA results (full)': 'data/sentiment/absa/absa_results.csv',
+    'Sentiment x sales monthly (series)': 'data/processed/stage4/sentiment_monthly_by_series.csv',
+    'Sentiment x sales monthly (brand)': 'data/processed/stage4/sentiment_sales_monthly_brand.csv',
+    'Attribution metrics': 'data/processed/stage4/attribution_metrics.csv',
+    'SHAP aspect ranking': 'data/processed/stage4/aspect_shap_ranking.csv',
+    'Granger brand summary': 'data/processed/stage4/granger_brand_summary.csv',
+    'Granger market summary': 'data/processed/stage4/granger_market.csv',
+}
+print('Stage 4 deliverables:')
+for k, v in stage4_files.items():
+    print(f'  - {k}: {v}')
+print('\\nFigures: stage4_shap_bar.png, stage4_shap_summary.png, stage4_granger_brand.png,')
+print('          stage4_granger_market.png, stage4_market_timeseries.png')""",
 }
 
 # --------------------------------------------------------------------------
@@ -485,7 +560,9 @@ MD = {
                  "- **阶段二 · 数据筛选与探索性可视化**：连续月份筛选、时序汇总、销量/分类/硬件可视化\n\n"
                  "- **阶段三 · 销量预测建模**：分层抽样评估、ARIMA / Prophet / Prophet+外生 / XGBoost / "
                  "LSTM / 融合多模型对比、滚动验证、特征消融、预测区间\n\n"
-                 "后续阶段（舆情文本深度处理、特征归因、看板交付）完成后将续接到本 Notebook。",
+                 "- **阶段四 · 舆情深度分析与销量归因**：深层 ABSA（全量 28,724 条评论）、"
+                 "XGBoost+SHAP 销量归因、Granger 时序因果\n\n"
+                 "看板交付（交互式可视化）作为独立交付物并行推进。",
 
         'env': "## 1. 环境与路径",
         'style': "### 图表样式（英文标签，简洁浅色风格）",
@@ -566,20 +643,62 @@ MD = {
         's3_intervals': "### 4.6 预测区间\n\n"
                         "给出 90% 名义覆盖率的预测区间，用 PICP（实际落在区间内的比例）与 MPIW（平均区间宽度）评估。",
 
-        'concl': "## 5. 结论与后续工作\n\n"
+        's4': "## 5. 阶段四：用户舆情深度分析与销量归因\n\n"
+              "阶段四在阶段三销量预测的基础上，深入挖掘舆情文本并量化舆情对销量的影响。\n\n"
+              "三大工作：\n"
+              "- **深层 ABSA**：用大模型（DeepSeek）对全部 28,724 条用户评论逐条打分，覆盖外观 / 内饰 / 空间 / 动力 / 操控 / 舒适 / 油耗 / 配置 / 智能化 / 性价比共 10 个维度（−1/0/+1）。\n"
+              "- **销量归因（XGBoost + SHAP）**：在车系级销量预测中加入舆情特征，对比有无舆情对 R² / MAPE 的影响，并用 SHAP 给出每个舆情维度的重要性排名。\n"
+              "- **时序因果（Granger）**：检验「过去舆情是否预测未来销量」，分品牌级与全市场级两层。",
+
+        's4_intro': "### 5.0 阶段四数据资产\n\n"
+                    "阶段四产物已由 `scripts/14-17` 生成：ABSA 结果（全量）、车系/品牌级情感-销量月序、归因指标、SHAP 排名、Granger 显著性。本 Notebook 直接加载产物展示，无需重复调用大模型。",
+
+        's4_absa': "### 5.1 深层 ABSA：全量评论逐维度情感\n\n"
+                   "下图展示全语料下 10 个维度情感的平均分。正值表示口碑偏正面、负值偏负面，一眼看出用户对各维度的真实态度（如舒适性、性价比往往最受关注）。",
+
+        's4_attr': "### 5.2 销量归因：舆情到底有没有用（XGBoost + SHAP）\n\n"
+                   "把舆情特征加入车系级 XGBoost 销量模型，对比「含舆情」与「无舆情」两版：\n\n"
+                   "- **R² 由 −0.073 提升至 0.138**，MAPE 由 16.5% 降至 14.7%，舆情特征对销量预测有实质增益。\n"
+                   "- SHAP 排名显示 **舒适性 > 性价比 > 智能化 > 配置 ≈ 空间 > 外观 > 内饰 > 操控 > 油耗 > 动力** 为影响销量的关键舆情维度，与汽车消费直觉高度一致。",
+
+        's4_granger': "### 5.3 时序因果：过去舆情能否预测未来销量（Granger）\n\n"
+                      "在品牌级（48 个有足够样本的品牌）检验各维度舆情对销量的 Granger 因果：\n\n"
+                      "- 约 **10-15% 的品牌**在至少一个维度上显著（如空间维度 7/48 显著），说明舆情→销量的因果信号存在但较弱、滞后较长。\n"
+                      "- 全市场聚合层面因果关系不显著——与汽车（高单价、长决策周期）舆情影响缓慢、被外部因素稀释的常态相符，结论需保守解读。",
+
+        's4_figs_md': "### 5.4 全市场舆情与销量时序\n\n"
+                      "下图为全市场层面各维度情感与总销量的月度走势叠加，直观展示二者长期关系。",
+
+        's4_out': "### 5.5 阶段四产出汇总\n\n"
+                  "| 产出 | 说明 | 文件 |\n"
+                  "|------|------|------|\n"
+                  "| ABSA 结果（全量） | 28,724 条评论 × 10 维度情感 | `data/sentiment/absa/absa_results.csv` |\n"
+                  "| 情感-销量月序（车系） | 486 系月度情感与销量 | `data/processed/stage4/sentiment_monthly_by_series.csv` |\n"
+                  "| 情感-销量月序（品牌） | 多品牌月度情感与销量 | `data/processed/stage4/sentiment_sales_monthly_brand.csv` |\n"
+                  "| 归因指标 | 含/不含舆情对比 | `data/processed/stage4/attribution_metrics.csv` |\n"
+                  "| SHAP 维度排名 | 各维度重要性 | `data/processed/stage4/aspect_shap_ranking.csv` |\n"
+                  "| Granger 品牌级 | 显著性比率 | `data/processed/stage4/granger_brand_summary.csv` |\n"
+                  "| Granger 市场级 | p 值 | `data/processed/stage4/granger_market.csv` |",
+
+        'concl': "## 6. 结论与后续工作\n\n"
                  "**已完成**：\n"
                  "- 阶段一：数据准备（6 份数据集，采集 / 清洗 / 对齐 / 分析就绪表）\n"
                  "- 阶段二：筛选与探索性可视化（连续月份筛选、时序汇总、销量/分类/硬件可视化）\n"
                  "- 阶段三：销量预测建模（ARIMA / Prophet / Prophet+外生 / XGBoost / LSTM / 融合"
-                 " + 分层抽样评估、滚动交叉验证、特征消融、预测区间）\n\n"
-                 "**核心结论**：在 150 系分层抽样评估集上，融合模型 / XGBoost / LSTM 等机器学习方法"
-                 "相较逐车系 ARIMA 基线更稳健。加入节假日、促销季与价格外生变量后，Prophet 精度并未明显提升，"
-                 "外生信号对月粒度销量预测贡献较小。具体数值见上方对比表与各分析小节。\n\n"
+                 " + 分层抽样评估、滚动交叉验证、特征消融、预测区间）\n"
+                 "- 阶段四：舆情深度分析与销量归因（深层 ABSA 全量 28,724 条、XGBoost+SHAP 销量归因、"
+                 "Granger 时序因果）\n\n"
+                 "**核心结论**：\n"
+                 "1. 销量预测：在 150 系分层抽样评估集上，融合 / XGBoost / LSTM 等机器学习方法相较逐车系 ARIMA 基线更稳健；"
+                 "节假日、促销季与价格等外生变量对月粒度销量预测贡献较小。\n"
+                 "2. 舆情归因：把舆情特征加入车系级销量模型后，R² 由 −0.073 提升至 0.138、MAPE 由 16.5% 降至 14.7%；"
+                 "SHAP 显示舒适性、性价比、智能化是最影响销量的舆情维度。\n"
+                 "3. 时序因果：品牌级约 10-15% 的品牌在至少一个舆情维度上呈 Granger 显著，全市场级不显著——"
+                 "说明舆情→销量的因果信号存在但弱、且滞后长，结论需保守。\n\n"
                  "**后续工作**：\n"
-                 "1. 舆情文本深度处理（NLP / 大模型情感与主题抽取）\n"
-                 "2. 销量的舆情特征归因（Sentiment → Sales 影响因子）\n"
-                 "3. 看板交付（PowerBI / ECharts / Flask）\n"
-                 "4. 生产化：在全量 669 车系上训练与部署",
+                 "1. 看板交付（Streamlit + ECharts 交互式可视化，独立交付物）\n"
+                 "2. （可选）扩产：将舆情归因从 486 个有评论车系扩展到全部 669 个建模车系\n"
+                 "3. 生产化：模型训练与部署自动化",
     },
     'en': {
         'title': "# " + PROJECT_EN + "\n\n"
@@ -592,8 +711,9 @@ MD = {
                  "time-series summary, sales/category/hardware charts\n\n"
                  "- **Stage 3 · Sales Forecasting Modeling**: stratified evaluation, ARIMA / Prophet / "
                  "Prophet+exog / XGBoost / LSTM / ensemble comparison, rolling CV, feature ablation, prediction intervals\n\n"
-                 "Later stages (deep sentiment NLP, sales attribution, dashboard) will be appended here "
-                 "as they are completed.",
+                 "- **Stage 4 · Deep Sentiment Analytics & Sales Attribution**: deep ABSA (full 28,724 reviews), "
+                 "XGBoost+SHAP attribution, Granger causality\n\n"
+                 "Dashboard delivery (interactive visualization) proceeds as a standalone deliverable.",
 
         'env': "## 1. Environment & Paths",
         'style': "### Chart style (English labels, clean light theme)",
@@ -686,21 +806,79 @@ MD = {
                         "90% nominal coverage intervals, evaluated by PICP (fraction of actuals captured) and "
                         "MPIW (mean interval width).",
 
-        'concl': "## 5. Conclusion & Future Work\n\n"
+        's4': "## 5. Stage 4: Deep User-Sentiment Analytics & Sales Attribution\n\n"
+              "Building on Stage 3's forecasts, Stage 4 mines the review text and quantifies how sentiment "
+              "drives sales.\n\n"
+              "Three pillars:\n"
+              "- **Deep ABSA**: a large model (DeepSeek) scores every one of the 28,724 reviews across 10 "
+              "aspects - appearance / interior / space / power / control / comfort / fuel / configuration / "
+              "intelligence / value (-1/0/+1).\n"
+              "- **Sales attribution (XGBoost + SHAP)**: adds sentiment features to a series-level sales model, "
+              "comparing with/without sentiment on R2 / MAPE, and ranks aspects by SHAP importance.\n"
+              "- **Temporal causality (Granger)**: tests whether past sentiment predicts future sales, at both "
+              "brand level and market level.",
+
+        's4_intro': "### 5.0 Stage 4 data assets\n\n"
+                    "All Stage-4 artifacts are produced by `scripts/14-17`: full ABSA results, series/brand-level "
+                    "sentiment-sales monthly series, attribution metrics, SHAP ranking, and Granger significance. "
+                    "This notebook loads them directly - no re-calling the LLM.",
+
+        's4_absa': "### 5.1 Deep ABSA: per-aspect sentiment on the full corpus\n\n"
+                   "The chart below shows the mean score of each of the 10 aspects across the whole corpus. "
+                   "Positive = favorable word-of-mouth, negative = unfavorable - a quick read on what users "
+                   "actually care about (comfort and value often dominate).",
+
+        's4_attr': "### 5.2 Sales attribution: does sentiment help? (XGBoost + SHAP)\n\n"
+                   "Adding sentiment features to a series-level XGBoost sales model, comparing the with-sentiment "
+                   "vs without-sentiment versions:\n\n"
+                   "- **R2 rises from -0.073 to 0.138** and MAPE drops from 16.5% to 14.7%, so sentiment carries "
+                   "real predictive gain.\n"
+                   "- SHAP ranks **comfort > value > intelligence > configuration = space > appearance > interior "
+                   "> control > fuel > power** as the sentiment aspects that matter most for sales - matching "
+                   "automotive buying intuition.",
+
+        's4_granger': "### 5.3 Temporal causality: does past sentiment predict future sales? (Granger)\n\n"
+                      "Brand-level Granger tests (48 brands with enough samples) per aspect:\n\n"
+                      "- Roughly **10-15% of brands** are significant on at least one aspect (e.g. space 7/48), "
+                      "so a sentiment->sales causal signal exists but is weak and lags.\n"
+                      "- At market-aggregate level the causality is not significant - consistent with cars being "
+                      "high-ticket, long-consideration purchases where sentiment works slowly and is diluted by "
+                      "external factors. Read conclusions conservatively.",
+
+        's4_figs_md': "### 5.4 Market-level sentiment vs sales over time\n\n"
+                      "The chart below overlays each aspect's sentiment with total sales at market level, showing "
+                      "the long-run relationship.",
+
+        's4_out': "### 5.5 Stage 4 outputs summary\n\n"
+                  "| Output | Description | File |\n"
+                  "|--------|-------------|------|\n"
+                  "| ABSA results (full) | 28,724 reviews x 10-aspect sentiment | `data/sentiment/absa/absa_results.csv` |\n"
+                  "| Sentiment x sales monthly (series) | 486 series monthly sentiment & sales | `data/processed/stage4/sentiment_monthly_by_series.csv` |\n"
+                  "| Sentiment x sales monthly (brand) | multiple brands monthly sentiment & sales | `data/processed/stage4/sentiment_sales_monthly_brand.csv` |\n"
+                  "| Attribution metrics | with/without sentiment comparison | `data/processed/stage4/attribution_metrics.csv` |\n"
+                  "| SHAP aspect ranking | per-aspect importance | `data/processed/stage4/aspect_shap_ranking.csv` |\n"
+                  "| Granger brand-level | significance rate | `data/processed/stage4/granger_brand_summary.csv` |\n"
+                  "| Granger market-level | p-values | `data/processed/stage4/granger_market.csv` |",
+
+        'concl': "## 6. Conclusion & Future Work\n\n"
                  "**Completed**:\n"
                  "- Stage 1: Data preparation (6 datasets: collection / cleaning / alignment / analysis-ready table)\n"
                  "- Stage 2: Filtering & exploratory visualization (consecutive-month filter, time-series summary, sales/category/hardware charts)\n"
                  "- Stage 3: Sales forecasting modeling (ARIMA / Prophet / Prophet+exog / XGBoost / LSTM / ensemble "
-                 "+ stratified evaluation, rolling CV, feature ablation, prediction intervals)\n\n"
-                 "**Key takeaway**: on the 150-series stratified subset, ML methods (ensemble / XGBoost / LSTM) are "
-                 "more robust than per-series ARIMA. Adding holidays, promotion seasons and price as exogenous "
-                 "regressors did not significantly improve Prophet, indicating that the external signal is weak at monthly granularity. "
-                 "See the comparison table and sections above for exact numbers.\n\n"
+                 "+ stratified evaluation, rolling CV, feature ablation, prediction intervals)\n"
+                 "- Stage 4: Deep sentiment analytics & sales attribution (deep ABSA on full 28,724 reviews, "
+                 "XGBoost+SHAP attribution, Granger causality)\n\n"
+                 "**Key takeaways**:\n"
+                 "1. Sales forecasting: on the 150-series stratified subset, ML methods (ensemble / XGBoost / LSTM) "
+                 "are more robust than per-series ARIMA; external regressors (holidays, promotions, price) add little at monthly granularity.\n"
+                 "2. Sentiment attribution: adding sentiment to the series-level model lifts R2 from -0.073 to 0.138 and "
+                 "cuts MAPE from 16.5% to 14.7%; SHAP flags comfort, value and intelligence as the most sales-relevant aspects.\n"
+                 "3. Temporal causality: ~10-15% of brands show Granger-significant sentiment on at least one aspect, but "
+                 "market-aggregate causality is not significant - the signal exists but is weak and lags, so read conservatively.\n\n"
                  "**Future Work**:\n"
-                 "1. Deep sentiment processing (NLP / LLM aspect & topic extraction)\n"
-                 "2. Sales attribution to sentiment features (Sentiment -> Sales impact factors)\n"
-                 "3. Dashboard delivery (PowerBI / ECharts / Flask)\n"
-                 "4. Productionization: train & deploy on the full 669-series dataset",
+                 "1. Dashboard delivery (Streamlit + ECharts interactive visualization, standalone deliverable)\n"
+                 "2. (Optional) Scale-out: extend sentiment attribution from the 486 reviewed series to all 669 modeled series\n"
+                 "3. Productionization: automate training & deployment",
     },
 }
 
@@ -771,6 +949,21 @@ def build(lang):
         new_code_cell(CODE['s3_ablation']),
         new_markdown_cell(md['s3_intervals']),
         new_code_cell(CODE['s3_intervals']),
+
+        # ---- Stage 4 ----
+        new_markdown_cell(md['s4']),
+        new_markdown_cell(md['s4_intro']),
+        new_markdown_cell(md['s4_absa']),
+        new_code_cell(CODE['s4_load']),
+        new_code_cell(CODE['s4_absa_dist']),
+        new_markdown_cell(md['s4_attr']),
+        new_code_cell(CODE['s4_attr']),
+        new_markdown_cell(md['s4_granger']),
+        new_code_cell(CODE['s4_granger']),
+        new_markdown_cell(md['s4_figs_md']),
+        new_code_cell(CODE['s4_figs']),
+        new_markdown_cell(md['s4_out']),
+        new_code_cell(CODE['s4_out']),
 
         new_markdown_cell(md['concl']),
     ]

@@ -9,6 +9,7 @@ venv/
 
 # Environment
 .env
+config/.env
 *.local
 
 # IDE
@@ -26,6 +27,8 @@ venv/
 # 原始/中间数据体积大, 不入库, 全部可用脚本复现:
 data/raw/*.csv
 data/sentiment/*.csv
+# 阶段四 ABSA 结果(由 scripts/14 生成, 可复现):
+data/sentiment/absa/
 # 阶段二/阶段三派生数据(由 scripts/04_explore_eda.py 及 05-13 建模脚本生成, 含 stage3/ 子目录, 均可复现):
 data/processed/
 
