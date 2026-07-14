@@ -543,6 +543,72 @@ for k, v in stage4_files.items():
     print(f'  - {k}: {v}')
 print('\\nFigures: stage4_shap_bar.png, stage4_shap_summary.png, stage4_granger_brand.png,')
 print('          stage4_granger_market.png, stage4_market_timeseries.png')""",
+
+    's5_load': """# Stage 5 data: sentiment fusion forecasting, keywords, LDA, alerts
+comp = pd.read_csv(os.path.join(PROC, 'stage5', 'forecast_comparison.csv'))
+fi = pd.read_csv(os.path.join(PROC, 'stage5', 'feature_importance.csv'))
+kw = pd.read_csv(os.path.join(PROC, 'stage5', 'topic_keywords.csv'))
+lda = pd.read_csv(os.path.join(PROC, 'stage5', 'lda_topics.csv'))
+alerts = pd.read_csv(os.path.join(PROC, 'stage5', 'sentiment_alerts.csv'))
+print('Stage 5 files loaded:', comp.shape, fi.shape, kw.shape, lda.shape, alerts.shape)""",
+
+    's5_comp': """# Stage 5A: sentiment -> sales forecast fusion
+print('=== Forecast comparison: lower WMAPE_vol = better ===')
+print(comp.round(3).to_string(index=False))
+
+p = os.path.join(FIG, 'stage5_forecast_comparison.png')
+if os.path.exists(p):
+    img = plt.imread(p); fig, ax = plt.subplots(figsize=(11, 5))
+    ax.imshow(img); ax.axis('off'); plt.tight_layout(); plt.show()""",
+
+    's5_fi': """# Stage 5A: feature importance (XGBoost + Top3 sentiment)
+print('=== Top 15 features ===')
+print(fi.head(15).to_string(index=False))
+
+p = os.path.join(FIG, 'stage5_sentiment_feature_importance.png')
+if os.path.exists(p):
+    img = plt.imread(p); fig, ax = plt.subplots(figsize=(9, 7))
+    ax.imshow(img); ax.axis('off'); plt.tight_layout(); plt.show()""",
+
+    's5_kw': """# Stage 5B: keywords for top-3 sentiment aspects
+print('=== Keywords by aspect (TF-IDF) ===')
+for aspect in ['舒适性', '性价比', '智能化']:
+    sub = kw[kw['aspect'] == aspect].head(10)
+    print(f'\\n[{aspect}]')
+    print(sub.to_string(index=False))""",
+
+    's5_lda': """# Stage 5B: LDA topics for top-3 sentiment aspects
+print('=== LDA topics ===')
+print(lda.to_string(index=False))
+
+p = os.path.join(FIG, 'stage5_lda_topics.png')
+if os.path.exists(p):
+    img = plt.imread(p); fig, ax = plt.subplots(figsize=(15, 5))
+    ax.imshow(img); ax.axis('off'); plt.tight_layout(); plt.show()""",
+
+    's5_alert': """# Stage 5C: sentiment alerts
+print(f'=== Sentiment alerts (n={len(alerts)}) ===')
+print(alerts.head(20).to_string(index=False))
+
+p = os.path.join(FIG, 'stage5_sentiment_alerts.png')
+if os.path.exists(p):
+    img = plt.imread(p); fig, ax = plt.subplots(figsize=(10, 8))
+    ax.imshow(img); ax.axis('off'); plt.tight_layout(); plt.show()""",
+
+    's5_out': """# Stage 5 deliverables summary
+stage5_files = {
+    'Forecast comparison': 'data/processed/stage5/forecast_comparison.csv',
+    'Per-series metrics': 'data/processed/stage5/per_series_metrics.csv',
+    'Feature importance': 'data/processed/stage5/feature_importance.csv',
+    'Topic keywords': 'data/processed/stage5/topic_keywords.csv',
+    'LDA topics': 'data/processed/stage5/lda_topics.csv',
+    'Sentiment alerts': 'data/processed/stage5/sentiment_alerts.csv',
+}
+print('Stage 5 deliverables:')
+for k, v in stage5_files.items():
+    print(f'  - {k}: {v}')
+print('\\nFigures: stage5_forecast_comparison.png, stage5_sentiment_feature_importance.png,')
+print('          stage5_topic_keywords.png, stage5_lda_topics.png, stage5_sentiment_alerts.png')""",
 }
 
 # --------------------------------------------------------------------------
@@ -680,25 +746,61 @@ MD = {
                   "| Granger 品牌级 | 显著性比率 | `data/processed/stage4/granger_brand_summary.csv` |\n"
                   "| Granger 市场级 | p 值 | `data/processed/stage4/granger_market.csv` |",
 
-        'concl': "## 6. 结论与后续工作\n\n"
+        's5': "## 6. 阶段五：舆情融合预测与话题预警\n\n"
+              "阶段五在阶段四「证明舆情有用」的基础上，回答两个更落地的问题：\n"
+              "1. 把舆情特征加入销量预测模型，能否实打实提升预测精度？\n"
+              "2. 用户围绕最关心的维度（舒适/性价比/智能）到底在聊什么？情绪骤降时能否预警？\n\n"
+              "做法：\n"
+              "- **A**：用阶段四的车系级月度情感序列（滞后 1-3 月）作为外生变量，重训 XGBoost（主）和 Prophet（辅），对比「无情感」「Top3 情感」「全量情感」三版。\n"
+              "- **B**：针对舒适、性价比、智能三个维度，用 jieba 分词 + TF-IDF 提取关键词，并跑 LDA 主题模型。\n"
+              "- **C**：定义「综合情感 < −0.1 且较上月下降 > 0.05」为预警规则，输出告警车系列表。",
+        's5_intro': "### 6.0 阶段五数据资产\n\n"
+                    "阶段五产物由 `scripts/18-20` 生成：情感融合预测对比、特征重要性、关键词、LDA 主题、预警清单。本 Notebook 直接加载产物展示，无需重新训练。",
+        's5_comp': "### 6.1 情感融合销量预测（A）\n\n"
+                   "核心结果：\n\n"
+                   "- **XGBoost-baseline** 体积加权 WMAPE 最低（34.79%），说明在 volume-weighted 层面，加入动态情感特征**没有提升**预测精度。\n"
+                   "- **XGBoost+Top3sent** 的 per-series WMAPE_mean 从 327% 降至 311%，说明情感对尾部小销量车系有帮助。\n"
+                   "- Prophet 加情感后仅微降（58.59% → 58.44%），提升极小。\n"
+                   "- **结论**：动态情感信号弱，对月度销量预测的直接提升有限，不如历史销量滞后特征重要。",
+        's5_fi': "### 6.2 特征重要性（A）\n\n"
+                 "XGBoost+Top3sent 的特征重要性中，`lag_1`、`roll_mean_3` 占据前两位；情感特征里只有 `intelligence_lag2` 进入前 15。再次印证历史销量是主导信号。",
+        's5_kw': "### 6.3 关键词（B）\n\n"
+                 "对舒适、性价比、智能三个维度提取 TF-IDF 关键词，直观展示用户在聊什么。",
+        's5_lda': "### 6.4 LDA 主题（B）\n\n"
+                  "用 LDA 主题模型对三个维度的评论做话题聚类，每个维度 5 个主题，输出 top 词。",
+        's5_alert': "### 6.5 情感预警规则（C）\n\n"
+                    "按「综合情感 < −0.1 且环比下降 > 0.05」输出预警清单，供业务监控参考。",
+        's5_out': "### 6.6 阶段五产出汇总\n\n"
+                  "| 产出 | 说明 | 文件 |\n"
+                  "|------|------|------|\n"
+                  "| 预测对比 | 无/Top3/全量情感 + XGBoost/Prophet | `data/processed/stage5/forecast_comparison.csv` |\n"
+                  "| 车系级指标 | 每车系每版本 WMAPE/MAPE/R² | `data/processed/stage5/per_series_metrics.csv` |\n"
+                  "| 特征重要性 | XGBoost+Top3sent 重要性 | `data/processed/stage5/feature_importance.csv` |\n"
+                  "| 关键词 | 舒适/性价比/智能 TF-IDF | `data/processed/stage5/topic_keywords.csv` |\n"
+                  "| LDA 主题 | 各维度 5 个主题 top 词 | `data/processed/stage5/lda_topics.csv` |\n"
+                  "| 预警清单 | 情感骤降车系 | `data/processed/stage5/sentiment_alerts.csv` |",
+        'concl': "## 7. 结论与后续工作\n\n"
                  "**已完成**：\n"
                  "- 阶段一：数据准备（6 份数据集，采集 / 清洗 / 对齐 / 分析就绪表）\n"
                  "- 阶段二：筛选与探索性可视化（连续月份筛选、时序汇总、销量/分类/硬件可视化）\n"
                  "- 阶段三：销量预测建模（ARIMA / Prophet / Prophet+外生 / XGBoost / LSTM / 融合"
                  " + 分层抽样评估、滚动交叉验证、特征消融、预测区间）\n"
                  "- 阶段四：舆情深度分析与销量归因（深层 ABSA 全量 28,724 条、XGBoost+SHAP 销量归因、"
-                 "Granger 时序因果）\n\n"
+                 "Granger 时序因果）\n"
+                 "- 阶段五：舆情融合预测与话题预警（情感融合 XGBoost/Prophet 对比、关键词+LDA、预警规则）\n\n"
                  "**核心结论**：\n"
                  "1. 销量预测：在 150 系分层抽样评估集上，融合 / XGBoost / LSTM 等机器学习方法相较逐车系 ARIMA 基线更稳健；"
                  "节假日、促销季与价格等外生变量对月粒度销量预测贡献较小。\n"
                  "2. 舆情归因：把舆情特征加入车系级销量模型后，R² 由 −0.073 提升至 0.138、MAPE 由 16.5% 降至 14.7%；"
                  "SHAP 显示舒适性、性价比、智能化是最影响销量的舆情维度。\n"
-                 "3. 时序因果：品牌级约 10-15% 的品牌在至少一个舆情维度上呈 Granger 显著，全市场级不显著——"
-                 "说明舆情→销量的因果信号存在但弱、且滞后长，结论需保守。\n\n"
+                 "3. 预测融合：把动态情感序列作为外生变量加入销量预测模型，volume-weighted 精度**没有进一步提升**"
+                 "（XGBoost-baseline 34.79% vs XGBoost+Top3sent 35.21%）；情感信号对尾部小销量车系有帮助，"
+                 "但整体弱于历史销量本身。\n"
+                 "4. 话题与预警：舒适、性价比、智能维度的关键词与 LDA 主题可解释用户关注点；"
+                 "情感骤降规则可输出少量高优先级告警车系。\n\n"
                  "**后续工作**：\n"
                  "1. 看板交付（Streamlit + ECharts 交互式可视化，独立交付物）\n"
-                 "2. （可选）扩产：将舆情归因从 486 个有评论车系扩展到全部 669 个建模车系\n"
-                 "3. 生产化：模型训练与部署自动化",
+                 "2. 生产化：模型训练与部署自动化",
     },
     'en': {
         'title': "# " + PROJECT_EN + "\n\n"
@@ -860,25 +962,60 @@ MD = {
                   "| Granger brand-level | significance rate | `data/processed/stage4/granger_brand_summary.csv` |\n"
                   "| Granger market-level | p-values | `data/processed/stage4/granger_market.csv` |",
 
-        'concl': "## 6. Conclusion & Future Work\n\n"
+        's5': "## 6. Stage 5: Sentiment Fusion Forecasting & Topic Alerts\n\n"
+              "Stage 5 builds on Stage 4's proof that sentiment matters and asks two more actionable questions:\n"
+              "1. Can we improve sales forecast accuracy by adding sentiment as an exogenous feature?\n"
+              "2. What are users actually talking about for the top-3 sentiment aspects, and can we alert on sudden sentiment drops?\n\n"
+              "Approach:\n"
+              "- **A**: Use series-level monthly sentiment series (lags 1-3 months) as exogenous regressors, retrain XGBoost (primary) and Prophet (secondary), and compare no-sentiment / Top3-sentiment / full-sentiment versions.\n"
+              "- **B**: For comfort, value and intelligence, extract keywords with jieba + TF-IDF and run LDA topic modeling.\n"
+              "- **C**: Define an alert rule (overall sentiment < -0.1 and month-over-month drop > 0.05) and output a watch-list of series.",
+        's5_intro': "### 6.0 Stage 5 data assets\n\n"
+                    "All Stage-5 artifacts are produced by `scripts/18-20`: forecast comparison, feature importance, keywords, LDA topics, and alert list. This notebook loads them directly.",
+        's5_comp': "### 6.1 Sentiment -> sales forecast fusion (A)\n\n"
+                   "Key results:\n\n"
+                   "- **XGBoost-baseline** has the lowest volume-weighted WMAPE (34.79%), meaning dynamic sentiment features **do not improve** the volume-weighted forecast.\n"
+                   "- **XGBoost+Top3sent** reduces mean per-series WMAPE from 327% to 311%, so sentiment helps tail / low-volume series.\n"
+                   "- Prophet improves only slightly with sentiment (58.59% -> 58.44%).\n"
+                   "- Conclusion: dynamic sentiment signal is weak; monthly sales forecasts are still dominated by historical sales lag features.",
+        's5_fi': "### 6.2 Feature importance (A)\n\n"
+                 "In XGBoost+Top3sent, `lag_1` and `roll_mean_3` dominate the top two spots; only `intelligence_lag2` ranks in the top 15 among sentiment features, confirming historical sales is the main driver.",
+        's5_kw': "### 6.3 Keywords (B)\n\n"
+                 "TF-IDF keywords for comfort, value and intelligence show what users actually discuss.",
+        's5_lda': "### 6.4 LDA topics (B)\n\n"
+                  "LDA topic modeling clusters reviews for the three aspects into 5 topics each, outputting top words.",
+        's5_alert': "### 6.5 Sentiment alert rules (C)\n\n"
+                    "Alerts are generated when overall sentiment < -0.1 and month-over-month drop > 0.05.",
+        's5_out': "### 6.6 Stage 5 outputs summary\n\n"
+                  "| Output | Description | File |\n"
+                  "|--------|-------------|------|\n"
+                  "| Forecast comparison | no/Top3/full sentiment + XGBoost/Prophet | `data/processed/stage5/forecast_comparison.csv` |\n"
+                  "| Per-series metrics | per-series WMAPE/MAPE/R2 | `data/processed/stage5/per_series_metrics.csv` |\n"
+                  "| Feature importance | XGBoost+Top3sent importance | `data/processed/stage5/feature_importance.csv` |\n"
+                  "| Topic keywords | comfort/value/intelligence TF-IDF | `data/processed/stage5/topic_keywords.csv` |\n"
+                  "| LDA topics | top words per topic per aspect | `data/processed/stage5/lda_topics.csv` |\n"
+                  "| Alert list | sudden negative sentiment series | `data/processed/stage5/sentiment_alerts.csv` |",
+        'concl': "## 7. Conclusion & Future Work\n\n"
                  "**Completed**:\n"
                  "- Stage 1: Data preparation (6 datasets: collection / cleaning / alignment / analysis-ready table)\n"
                  "- Stage 2: Filtering & exploratory visualization (consecutive-month filter, time-series summary, sales/category/hardware charts)\n"
                  "- Stage 3: Sales forecasting modeling (ARIMA / Prophet / Prophet+exog / XGBoost / LSTM / ensemble "
                  "+ stratified evaluation, rolling CV, feature ablation, prediction intervals)\n"
                  "- Stage 4: Deep sentiment analytics & sales attribution (deep ABSA on full 28,724 reviews, "
-                 "XGBoost+SHAP attribution, Granger causality)\n\n"
+                 "XGBoost+SHAP attribution, Granger causality)\n"
+                 "- Stage 5: Sentiment fusion forecasting & topic alerts (XGBoost/Prophet comparison, keywords+LDA, alert rules)\n\n"
                  "**Key takeaways**:\n"
                  "1. Sales forecasting: on the 150-series stratified subset, ML methods (ensemble / XGBoost / LSTM) "
                  "are more robust than per-series ARIMA; external regressors (holidays, promotions, price) add little at monthly granularity.\n"
                  "2. Sentiment attribution: adding sentiment to the series-level model lifts R2 from -0.073 to 0.138 and "
                  "cuts MAPE from 16.5% to 14.7%; SHAP flags comfort, value and intelligence as the most sales-relevant aspects.\n"
-                 "3. Temporal causality: ~10-15% of brands show Granger-significant sentiment on at least one aspect, but "
-                 "market-aggregate causality is not significant - the signal exists but is weak and lags, so read conservatively.\n\n"
+                 "3. Forecast fusion: adding dynamic sentiment as an exogenous feature **does not further improve** "
+                 "volume-weighted accuracy (XGBoost-baseline 34.79% vs XGBoost+Top3sent 35.21%); sentiment helps tail/low-volume series but is weaker than historical sales itself.\n"
+                 "4. Topics & alerts: keywords and LDA topics for comfort, value and intelligence explain user concerns; "
+                 "the sudden-drop rule produces a small high-priority watch-list.\n\n"
                  "**Future Work**:\n"
                  "1. Dashboard delivery (Streamlit + ECharts interactive visualization, standalone deliverable)\n"
-                 "2. (Optional) Scale-out: extend sentiment attribution from the 486 reviewed series to all 669 modeled series\n"
-                 "3. Productionization: automate training & deployment",
+                 "2. Productionization: automate training & deployment",
     },
 }
 
@@ -964,6 +1101,23 @@ def build(lang):
         new_code_cell(CODE['s4_figs']),
         new_markdown_cell(md['s4_out']),
         new_code_cell(CODE['s4_out']),
+
+        # ---- Stage 5 ----
+        new_markdown_cell(md['s5']),
+        new_markdown_cell(md['s5_intro']),
+        new_code_cell(CODE['s5_load']),
+        new_markdown_cell(md['s5_comp']),
+        new_code_cell(CODE['s5_comp']),
+        new_markdown_cell(md['s5_fi']),
+        new_code_cell(CODE['s5_fi']),
+        new_markdown_cell(md['s5_kw']),
+        new_code_cell(CODE['s5_kw']),
+        new_markdown_cell(md['s5_lda']),
+        new_code_cell(CODE['s5_lda']),
+        new_markdown_cell(md['s5_alert']),
+        new_code_cell(CODE['s5_alert']),
+        new_markdown_cell(md['s5_out']),
+        new_code_cell(CODE['s5_out']),
 
         new_markdown_cell(md['concl']),
     ]
