@@ -8,9 +8,8 @@
   多源汽车数据 + 用户口碑舆情 + 销量预测与归因 → 一套端到端分析流水线与交互式网页看板
 </p>
 
-<p align="center">
-  ![AutoPulse 交互演示]（https://github.com/user-attachments/assets/6072ccda-0d16-4865-8937-c1c3b73eeaa5)
-</p>
+<video src="https://github.com/user-attachments/assets/6072ccda-0d16-4865-8937-c1c3b73eeaa5" width="900" controls></video>
+
 
 ---
 
