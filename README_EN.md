@@ -8,10 +8,7 @@
   Multi-source automotive data + user word-of-mouth sentiment + sales forecasting & attribution →
   a end-to-end analytics pipeline and interactive web dashboard.
 </p>
-
-<p align="center">
-  ![AutoPulse interactive demo](https://github.com/user-attachments/assets/977dd7cc-c016-4697-8468-beba9ce47ff1)
-</p>
+<video src="https://github.com/user-attachments/assets/977dd7cc-c016-4697-8468-beba9ce47ff1" width="900" controls></video>
 
 ---
 
