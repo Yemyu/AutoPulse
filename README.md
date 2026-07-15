@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  ![AutoPulse 交互演示](https://github.com/user-attachments/assets/6279c1fe-9c44-4c84-92da-38e3372eefb7)
+  ![AutoPulse 交互演示]（https://github.com/user-attachments/assets/6072ccda-0d16-4865-8937-c1c3b73eeaa5)
 </p>
 
 ---
