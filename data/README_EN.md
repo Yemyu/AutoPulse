@@ -315,7 +315,7 @@ for the same car; this table aligns them.
 ## 6. Sentiment / Review Data
 
 **Source:** Dongchedi public review API (`dongchedi.com/motor/pc/car/series/get_review_list`),
-pure `requests`, no browser, no login. Crawler: `scripts/01_crawl_reviews.py` (v7, supports
+pure `requests`. Crawler: `scripts/01_crawl_reviews.py` (v7, supports
 `--all` / `--brands` / `--series` / `--max`, with resume).
 
 ### File List

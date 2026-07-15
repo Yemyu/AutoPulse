@@ -5,15 +5,11 @@
 <h1 align="center">AutoPulse：汽车销量预测与用户舆情分析</h1>
 
 <p align="center">
-  多源汽车数据 + 用户口碑舆情 + 销量预测与归因 → 一套可复现的端到端分析流水线与交互式网页看板
+  多源汽车数据 + 用户口碑舆情 + 销量预测与归因 → 一套端到端分析流水线与交互式网页看板
 </p>
 
 <p align="center">
-  <img src="figures/dashboard_demo.gif" alt="AutoPulse 交互演示" width="900">
-</p>
-
-<p align="center">
-  <a href="figures/dashboard_demo.mp4">MP4 版本</a>
+  ![AutoPulse 交互演示](https://github.com/user-attachments/assets/6279c1fe-9c44-4c84-92da-38e3372eefb7)
 </p>
 
 ---
@@ -32,7 +28,7 @@
 
 ## 六阶段工作流
 
-项目按真实工作流拆成 6 个阶段，对应 `scripts/` 下 `01_` ~ `20_` 流水线脚本与 `notebook/AutoPulse_Analysis.ipynb`（中英双语）。
+项目按真实工作流拆成 6 个阶段，对应 `scripts/` 下 `01_` ~ `20_` 流水线脚本与 `notebook/AutoPulse_Analysis.ipynb`。
 
 ### 阶段一 · 数据准备
 
@@ -121,10 +117,6 @@
 - 动态情感作为外生变量**未提升** volume-weighted 精度（XGBoost-baseline 34.79% vs +Top3sent 35.21%）。
 - 但对尾部小销量车系，情感特征能降低 per-series WMAPE（327% → 311%）。
 - 关键词 + LDA 主题可解释用户关注点；预警规则输出少量高优先级车系。
-
-<p align="center">
-  <img src="figures/stage5_sentiment_alerts.png" alt="阶段五：舆情预警示例" width="700">
-</p>
 
 ---
 
@@ -242,7 +234,7 @@ AutoPulse/
 
 ## 技术栈
 
-- **数据采集**：Python `requests` + `BeautifulSoup` / 懂车帝口碑 API（零浏览器、零登录）
+- **数据采集**：Python `requests` + `BeautifulSoup` / 懂车帝口碑 API
 - **数据处理**：Pandas、NumPy、ETL Pipeline
 - **NLP**：jieba、Hugging Face Transformers、DeepSeek API（ABSA）
 - **机器学习 / 时序**：scikit-learn、XGBoost、 Prophet、statsmodels、PyTorch（LSTM）
@@ -252,29 +244,7 @@ AutoPulse/
 
 ---
 
-## 网页看板如何上线 GitHub
-
-本项目采用最常见的作品集方案：**代码仓库 + README 交互演示 + 本地运行**。访问者克隆后一键启动即可体验完整看板。
-
-```bash
-# 提交到本地（推送/仓库名由你决定）
-git add .
-git commit -m "Stage 6: dashboard, notebooks, README with images"
-```
-
-克隆后运行：
-
-```bash
-pip install -r requirements.txt
-python app/app.py
-# 打开 http://127.0.0.1:5001/
-```
-
-进阶部署（GitHub Pages 静态导出、PaaS 部署等）可按需自行扩展，本仓库以「代码仓库 + 本地运行」方式交付。
-
----
-
-## 数据说明与伦理声明
+## 数据说明
 
 - 所有数据来自**公开汽车平台**（懂车帝、太平洋汽车）。
 - 原始 / 中间数据体积较大，已加入 `.gitignore`，克隆后按「快速开始」步骤即可直接启动看板。
@@ -298,8 +268,6 @@ python app/app.py
 | [glanceapp/glance](https://github.com/glanceapp/glance) | Go | 自托管个人 Dashboard | 28k+ |
 | [plotly/dash](https://github.com/plotly/dash) | Python / React | 分析型 Web 应用 | 22k+ |
 | [evidence-dev/evidence](https://github.com/evidence-dev/evidence) | JS | Markdown + SQL 写报告看板 | 12k+ |
-
-> 这些多为「平台 / 框架」，而 AutoPulse 是端到端单项目作品集（采集 → 清洗 → 建模 → 归因 → 看板），参考其 README 排版与部署说明即可。
 
 ---
 

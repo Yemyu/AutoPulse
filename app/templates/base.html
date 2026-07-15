@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AutoPulse</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {# 防 FOUC：在 i18n.js 下载/执行前，浏览器可能先把服务端渲染的中文默认文案画出来，
+     视频录制会抓到“中文一闪”。先把带 data-i18n 的元素隐藏，FOUC 应用完语言后再显示。 #}
+  <style>[data-i18n]{visibility:hidden}</style>
 </head>
 <body>
   <header class="topbar">
@@ -48,6 +51,13 @@
   <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
   <script src="{{ url_for('static', filename='js/common.js') }}"></script>
   <script src="{{ url_for('static', filename='js/i18n.js') }}"></script>
+  {# 在首屏绘制前同步应用语言，避免服务端渲染的中文默认文案先闪现再被 JS 替换（FOUC）。
+     中文版 zh→zh 为恒等式，无任何视觉变化；英文版绘制前即为英文，切换无卡顿。
+     应用完成后再显示 [data-i18n] 元素，彻底消除加载阶段的中文闪烁。 #}
+  <script>
+    try { window.I18N && window.I18N.apply(); } catch (e) {}
+    document.querySelectorAll("[data-i18n]").forEach(function (el) { el.style.visibility = "visible"; });
+  </script>
   {% block scripts %}{% endblock %}
 </body>
 </html>

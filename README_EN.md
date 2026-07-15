@@ -6,15 +6,11 @@
 
 <p align="center">
   Multi-source automotive data + user word-of-mouth sentiment + sales forecasting & attribution →
-  a reproducible end-to-end analytics pipeline and interactive web dashboard.
+  a end-to-end analytics pipeline and interactive web dashboard.
 </p>
 
 <p align="center">
-  <img src="figures/dashboard_demo_en.gif" alt="AutoPulse interactive demo (English)" width="900">
-</p>
-
-<p align="center">
-  <a href="figures/dashboard_demo_en.mp4">MP4 version</a>
+  ![AutoPulse interactive demo](https://github.com/user-attachments/assets/977dd7cc-c016-4697-8468-beba9ce47ff1)
 </p>
 
 ---
@@ -33,7 +29,7 @@
 
 ## Six-Stage Workflow (Read like a Notebook)
 
-The project is organized into six real-world stages, corresponding to the `01_` ~ `20_` pipeline scripts in `scripts/` and the bilingual `notebook/AutoPulse_Analysis.ipynb`.
+The project is organized into six real-world stages, corresponding to the `01_` ~ `20_` pipeline scripts in `scripts/` and the `notebook/AutoPulse_Analysis_EN.ipynb`.
 
 ### Stage 1 · Data Preparation
 
@@ -122,10 +118,6 @@ The project is organized into six real-world stages, corresponding to the `01_` 
 - Dynamic sentiment as an exogenous feature **does not improve** volume-weighted accuracy (XGBoost-baseline 34.79% vs +Top3sent 35.21%).
 - For tail / low-volume series, sentiment reduces per-series WMAPE (327% → 311%).
 - Keywords and LDA topics explain user concerns; the alert rule produces a small high-priority watch list.
-
-<p align="center">
-  <img src="figures/stage5_sentiment_alerts.png" alt="Stage 5: sentiment alerts" width="700">
-</p>
 
 ---
 
@@ -230,7 +222,7 @@ AutoPulse/
 ├── figures/                       # Analysis charts, dashboard screenshots, and demo GIF
 ├── LICENSE                        # MIT license
 ├── notebook/                      # Bilingual analysis notebooks
-│   ├── AutoPulse_Analysis.ipynb
+│   ├── AutoPulse_Analysis_EN.ipynb
 │   └── AutoPulse_Analysis_EN.ipynb
 ├── scripts/                       # 01_~20_ pipeline scripts
 ├── config/                        # Config & .env template
@@ -243,7 +235,7 @@ AutoPulse/
 
 ## Tech Stack
 
-- **Data collection**: Python `requests` + `BeautifulSoup` / Dongchedi review API (no browser, no login)
+- **Data collection**: Python `requests` + `BeautifulSoup` / Dongchedi review API
 - **Data processing**: Pandas, NumPy, ETL pipelines
 - **NLP**: jieba, Hugging Face Transformers, DeepSeek API (ABSA)
 - **Machine learning / time-series**: scikit-learn, XGBoost, Prophet, statsmodels, PyTorch (LSTM)
@@ -253,29 +245,7 @@ AutoPulse/
 
 ---
 
-## How to Put the Dashboard on GitHub
-
-This project uses the most common portfolio setup: **code repo + README demo + local run**. Visitors clone the repo and start the dashboard locally.
-
-```bash
-# commit locally (push / repo name is up to you)
-git add .
-git commit -m "Stage 6: dashboard, notebooks, README with images"
-```
-
-After cloning:
-
-```bash
-pip install -r requirements.txt
-python app/app.py
-# open http://127.0.0.1:5001/
-```
-
-Advanced deployment (GitHub Pages static export, PaaS, etc.) can be extended as needed; this repo ships as "code repo + local run".
-
----
-
-## Data Notes & Ethics Statement
+## Data Notes
 
 - All data come from **public automotive platforms** (Dongchedi, PCauto) and are collected by self-built crawlers. **No manual curation, no personal information, fully reproducible**.
 - Raw / intermediate data is large and gitignored; follow the "Quick Start" steps to launch the dashboard directly after cloning.
@@ -299,8 +269,6 @@ This project is inspired by the Capgemini Big Data Insights team internship. Tec
 | [glanceapp/glance](https://github.com/glanceapp/glance) | Go | Self-hosted personal dashboard | 28k+ |
 | [plotly/dash](https://github.com/plotly/dash) | Python / React | Analytical web applications | 22k+ |
 | [evidence-dev/evidence](https://github.com/evidence-dev/evidence) | JS | Write reports & dashboards with Markdown + SQL | 12k+ |
-
-> Most of these are "platforms / frameworks"; AutoPulse is an end-to-end single-project portfolio (collection → cleaning → modeling → attribution → dashboard). Refer to their README layout and deployment notes.
 
 ---
 

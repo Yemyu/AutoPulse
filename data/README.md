@@ -312,7 +312,7 @@ vehicles ———— series_id ———— series_mapping ———— series_
 
 ## 六、舆情口碑数据（sentiment）
 
-**来源**：懂车帝公开口碑 API（`dongchedi.com/motor/pc/car/series/get_review_list`），纯 `requests` 采集，零浏览器、零登录。采集脚本 `scripts/01_crawl_reviews.py`（v7，支持 `--all` / `--brands` / `--series` / `--max`，断点续传）。
+**来源**：懂车帝公开口碑 API（`dongchedi.com/motor/pc/car/series/get_review_list`），纯 `requests` 采集。采集脚本 `scripts/01_crawl_reviews.py`（v7，支持 `--all` / `--brands` / `--series` / `--max`，断点续传）。
 
 ### 文件清单
 
