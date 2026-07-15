@@ -253,20 +253,10 @@ AutoPulse/
 
 ---
 
-## 参考与致谢
+## 致谢
 
-技术选型与可视化参考了多个优秀的开源「网页看板 / 数据可视化」项目（Star 较高，可作技术选型与 README 排版参考）：
-
-| 项目 | 语言 | 定位 | Star（约） |
-|------|------|------|-----------|
-| [apache/superset](https://github.com/apache/superset) | Python / TS | 数据探索与可视化平台 | 68k+ |
-| [grafana/grafana](https://github.com/grafana/grafana) | Go / TS | 时序监控与告警看板 | 65k+ |
-| [streamlit/streamlit](https://github.com/streamlit/streamlit) | Python / TS | Python 脚本转数据应用 | 42k+ |
-| [metabase/metabase](https://github.com/metabase/metabase) | Clojure / JS | 面向非技术的 BI 平台 | 39k+ |
-| [getredash/redash](https://github.com/getredash/redash) | Python / JS | 查询结果可视化 | 28k+ |
-| [glanceapp/glance](https://github.com/glanceapp/glance) | Go | 自托管个人 Dashboard | 28k+ |
-| [plotly/dash](https://github.com/plotly/dash) | Python / React | 分析型 Web 应用 | 22k+ |
-| [evidence-dev/evidence](https://github.com/evidence-dev/evidence) | JS | Markdown + SQL 写报告看板 | 12k+ |
+- 数据来源于**懂车帝**（用户口碑、车型配置参数）与**太平洋汽车**（月度销量），感谢其公开数据支撑本项目的研究与展示。
+- 数据版权归原平台所有，本项目仅用于学习、研究与展示，遵守其使用规范。
 
 ---
 

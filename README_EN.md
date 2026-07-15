@@ -252,20 +252,10 @@ Detailed data dictionary, missing-value notes, and quality report are in `data/R
 
 ---
 
-## References & Acknowledgments
+## Acknowledgments
 
-This project is inspired by the Capgemini Big Data Insights team internship. Technology choices and visual design reference several excellent open-source "web dashboard / data visualization" projects (high Star, useful for tech selection and README layout):
-
-| Project | Language | Focus | Stars (approx.) |
-|---------|----------|-------|-----------------|
-| [apache/superset](https://github.com/apache/superset) | Python / TS | Data exploration & visualization platform | 68k+ |
-| [grafana/grafana](https://github.com/grafana/grafana) | Go / TS | Time-series monitoring & alerting dashboard | 65k+ |
-| [streamlit/streamlit](https://github.com/streamlit/streamlit) | Python / TS | Turn Python scripts into data apps | 42k+ |
-| [metabase/metabase](https://github.com/metabase/metabase) | Clojure / JS | BI platform for non-technical users | 39k+ |
-| [getredash/redash](https://github.com/getredash/redash) | Python / JS | Query-result visualization | 28k+ |
-| [glanceapp/glance](https://github.com/glanceapp/glance) | Go | Self-hosted personal dashboard | 28k+ |
-| [plotly/dash](https://github.com/plotly/dash) | Python / React | Analytical web applications | 22k+ |
-| [evidence-dev/evidence](https://github.com/evidence-dev/evidence) | JS | Write reports & dashboards with Markdown + SQL | 12k+ |
+- Data are sourced from **Dongchedi** (user reviews, vehicle specifications) and **PCauto** (monthly sales). Thanks to these platforms for the public data that supports this project's research and demonstration.
+- Data copyright belongs to the original platforms; this project is for learning, research, and demonstration only, in compliance with their terms of use.
 
 ---
 
