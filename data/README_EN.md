@@ -2,13 +2,16 @@
   <a href="./README.md">🇨🇳 中文</a> &nbsp;|&nbsp; <a href="./README_EN.md">🌐 English</a>
 </p>
 
-# Data README
+# Data Documentation
 
-> The single source of truth for all dataset documentation in this project. The former
-> `data/sentiment/data_quality_report.md`
-> (sentiment quality report) has been merged into this file to avoid fragmentation.
-> All data come from public web crawlers (see the "Data Sources & Collection" section in the
-> root `README.md`) and can be fully reproduced with the scripts under `scripts/`.
+This file is the single source of truth for all AutoPulse datasets — vehicle specifications, monthly sales, series-ID mapping, and user sentiment — used for modeling, analysis, and the dashboard. All data come from public automotive platforms and are used for learning, research, and demonstration only.
+
+## Data Sources
+
+| Data category | Source platform(s) | Collection method |
+|---------------|--------------------|-------------------|
+| Vehicle specs / monthly sales (raw) | Public auto platforms such as Autohome (汽车之家) and PCauto (太平洋汽车) | Comprehensively collected (no dedicated crawler script) |
+| User sentiment / reviews | Dongchedi (懂车帝) public reviews | Automated via `scripts/01_crawl_reviews.py` |
 
 ## Dataset Overview
 
@@ -34,7 +37,7 @@ filter `has_sales_data=True` → a 1,122-row × 90+-column training set.
 | Brands | 153 |
 | Feature columns | 92 (reduced from 248 raw columns after cleaning) |
 | Model years | 2022–2026 |
-| Source | Dongchedi (懂车帝) |
+| Source | Public auto platforms (Autohome, PCauto, etc.), comprehensively collected |
 
 **Energy-type distribution (deduplicated by series):**
 
@@ -223,8 +226,7 @@ Total missing = 90,042, all **conditional missing** (legitimate, no imputation n
 
 ### Purpose
 
-Bridge table. Dongchedi (source of `vehicles`) and pcauto (source of `sales`) use different IDs
-for the same car; this table aligns them.
+Bridge table. Vehicle specs and monthly sales come from different platform ID systems; this table aligns them so the three core tables join on a unified `series_id`.
 
 ### Overview
 
@@ -315,7 +317,7 @@ for the same car; this table aligns them.
 ## 6. Sentiment / Review Data
 
 **Source:** Dongchedi public review API (`dongchedi.com/motor/pc/car/series/get_review_list`),
-pure `requests`. Crawler: `scripts/01_crawl_reviews.py` (v7, supports
+pure `requests`. Crawler: `scripts/01_crawl_reviews.py` (supports
 `--all` / `--brands` / `--series` / `--max`, with resume).
 
 ### File List

@@ -314,8 +314,7 @@ def main():
     output_file = os.path.join(OUTPUT_DIR, "sentiment_reviews.csv")
 
     print("=" * 60)
-    print("  懂车帝口碑舆情采集器 v7")
-    print("  零浏览器 · 零登录 · 纯API · 生产版")
+    print("  懂车帝口碑舆情采集器")
     print("=" * 60)
 
 # 确定目标

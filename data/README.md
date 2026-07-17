@@ -2,11 +2,16 @@
   <a href="./README.md">🇨🇳 中文</a> &nbsp;|&nbsp; <a href="./README_EN.md">🌐 English</a>
 </p>
 
-# 数据 README
+# 数据文档（Data Documentation）
 
-> 本项目全部数据文档的单一来源。原 `data/sentiment/data_quality_report.md`
-> 已并入本文件，避免分散与重复。数据均来自公开爬虫（见根目录 `README.md` 的「数据来源与采集」），
-> 可用 `scripts/` 下的脚本复现。
+本文件是 AutoPulse 全部数据集的单一说明来源，涵盖车型配置、月度销量、车系映射与用户舆情四类数据，供建模、分析与看板使用。所有数据均来自公开汽车平台，仅用于学习、研究与展示。
+
+## 数据来源
+
+| 数据类别 | 来源平台 | 采集方式 |
+|----------|----------|----------|
+| 车型配置 / 月度销量（原始数据） | 汽车之家、太平洋汽车等公开汽车平台 | 综合采集（无独立爬虫脚本） |
+| 用户舆情口碑 | 懂车帝公开口碑 | `scripts/01_crawl_reviews.py` 自动化采集 |
 
 ## 项目数据全景
 
@@ -31,7 +36,7 @@ vehicles ———— series_id ———— series_mapping ———— series_
 | 品牌数 | 153 个 |
 | 特征列 | 92 列（原始 248 列经清洗去冗余） |
 | 时间范围 | 2022–2026 款车型 |
-| 数据来源 | 懂车帝 |
+| 数据来源 | 汽车之家、太平洋汽车等公开汽车平台（综合采集） |
 
 **能源类型分布（按车系去重）：**
 
@@ -170,9 +175,7 @@ vehicles ———— series_id ———— series_mapping ———— series_
 
 **趋势：** SUV 年销量从 2022 年 915 万辆增长到 2025 年 1,196 万辆，2024 年反超轿车成为中国第一大品类。
 
-### 月销量分布
-
-读懂了这些数字，才知道什么样的车算"热销"：
+### 月销量分位数分布
 
 | 百分位 | 月销量 | 解读 |
 |--------|--------|------|
@@ -222,7 +225,7 @@ vehicles ———— series_id ———— series_mapping ———— series_
 
 ### 作用
 
-桥梁表。懂车帝（vehicles 的来源）和太平洋汽车网（sales 的来源）对同一台车用的 ID 不一样，这张表把它们对齐。
+桥梁表。车型配置与月度销量来自不同平台的 ID 体系，这张表将两者对齐，使三张核心表可通过统一 `series_id` 关联。
 
 ### 数据概况
 
@@ -312,7 +315,7 @@ vehicles ———— series_id ———— series_mapping ———— series_
 
 ## 六、舆情口碑数据（sentiment）
 
-**来源**：懂车帝公开口碑 API（`dongchedi.com/motor/pc/car/series/get_review_list`），纯 `requests` 采集。采集脚本 `scripts/01_crawl_reviews.py`（v7，支持 `--all` / `--brands` / `--series` / `--max`，断点续传）。
+**来源**：懂车帝公开口碑 API（`dongchedi.com/motor/pc/car/series/get_review_list`），纯 `requests` 采集。采集脚本 `scripts/01_crawl_reviews.py`（支持 `--all` / `--brands` / `--series` / `--max`，断点续传）。
 
 ### 文件清单
 

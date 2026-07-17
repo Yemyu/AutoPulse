@@ -244,7 +244,7 @@ AutoPulse/
 
 ## Data Notes
 
-- All data come from **public automotive platforms** (Dongchedi, PCauto) and are collected by self-built crawlers. **No manual curation, no personal information, fully reproducible**.
+- All data come from **public automotive platforms** (Autohome, PCauto, etc.; user sentiment from Dongchedi). **No manual curation, no personal information**.
 - Raw / intermediate data is large and gitignored; follow the "Quick Start" steps to launch the dashboard directly after cloning.
 - Data copyright belongs to the original platforms. This project is for learning, research, and demonstration only, not commercial use.
 
