@@ -10,7 +10,7 @@
 
 | 数据类别 | 来源平台 | 采集方式 |
 |----------|----------|----------|
-| 车型配置 / 月度销量（原始数据） | 汽车之家、太平洋汽车等公开汽车平台 | 综合采集（无独立爬虫脚本） |
+| 车型配置 / 月度销量（原始数据） | 汽车之家、太平洋汽车等公开汽车平台 | 综合采集 |
 | 用户舆情口碑 | 懂车帝公开口碑 | `scripts/01_crawl_reviews.py` 自动化采集 |
 
 ## 项目数据全景
@@ -315,7 +315,7 @@ vehicles ———— series_id ———— series_mapping ———— series_
 
 ## 六、舆情口碑数据（sentiment）
 
-**来源**：懂车帝公开口碑 API（`dongchedi.com/motor/pc/car/series/get_review_list`），纯 `requests` 采集。采集脚本 `scripts/01_crawl_reviews.py`（支持 `--all` / `--brands` / `--series` / `--max`，断点续传）。
+**来源**：懂车帝公开口碑 API（`dongchedi.com/motor/pc/car/series/get_review_list`），纯 `requests` 采集。采集脚本 `scripts/01_crawl_reviews.py`。
 
 ### 文件清单
 

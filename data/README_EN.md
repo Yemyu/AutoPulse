@@ -10,7 +10,7 @@ This file is the single source of truth for all AutoPulse datasets — vehicle s
 
 | Data category | Source platform(s) | Collection method |
 |---------------|--------------------|-------------------|
-| Vehicle specs / monthly sales (raw) | Public auto platforms such as Autohome (汽车之家) and PCauto (太平洋汽车) | Comprehensively collected (no dedicated crawler script) |
+| Vehicle specs / monthly sales (raw) | Public auto platforms such as Autohome (汽车之家) and PCauto (太平洋汽车) | Comprehensively collected |
 | User sentiment / reviews | Dongchedi (懂车帝) public reviews | Automated via `scripts/01_crawl_reviews.py` |
 
 ## Dataset Overview
@@ -317,8 +317,7 @@ Bridge table. Vehicle specs and monthly sales come from different platform ID sy
 ## 6. Sentiment / Review Data
 
 **Source:** Dongchedi public review API (`dongchedi.com/motor/pc/car/series/get_review_list`),
-pure `requests`. Crawler: `scripts/01_crawl_reviews.py` (supports
-`--all` / `--brands` / `--series` / `--max`, with resume).
+pure `requests`. Crawler: `scripts/01_crawl_reviews.py`.
 
 ### File List
 
