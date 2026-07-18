@@ -37,7 +37,7 @@ window.I18N = (function () {
     // forecast
     "fc_title": { zh: "销量预测", en: "Sales Forecasting" },
     "fc_lead": { zh: "销量预测回答车企的核心问题：下个月能卖多少？对比多种模型后发现，历史销量惯性是最强信号，而月度舆情作为动态特征的增益有限。", en: "Sales forecasting estimates next month's vehicle sales. Across models, historical sales momentum is the strongest signal, while monthly sentiment provides limited lift." },
-    "fc_model_cmp": { zh: "模型对比（体积加权 WMAPE，越低越好）", en: "Model Comparison (Volume-Weighted WMAPE, Lower is Better)" },
+    "fc_model_cmp": { zh: "模型对比（体积加权 WMAPE）", en: "Model Comparison (Volume-Weighted WMAPE)" },
     "fc_example": { zh: "预测示例：", en: "Prediction Example: " },
     "fc_example_sub": { zh: "（实际 vs 预测）", en: " (Actual vs Predicted)" },
     "fc_features": { zh: "特征重要性（Top 12）", en: "Feature Importance (Top 12)" },
