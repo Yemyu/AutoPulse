@@ -1,10 +1,51 @@
-{% extends "base.html" %}
-{% set title='钻取分析' %}
-{% set title_key='dd_title' %}
-{% block lead %}
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AutoPulse · 钻取分析</title>
+  <link rel="stylesheet" href="static/css/style.css">
+  <!-- 防 FOUC：在 i18n.js 下载/执行前，浏览器可能先把服务端渲染的中文默认文案画出来，
+     视频录制会抓到“中文一闪”。先把带 data-i18n 的元素隐藏，FOUC 应用完语言后再显示。 -->
+  <style>[data-i18n]{visibility:hidden}</style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">AutoPulse</div>
+    <div class="brand-sub" data-i18n="brand_sub">汽车销量预测与用户舆情分析</div>
+    <div class="top-actions">
+      <button id="langSwitch" class="lang-switch" data-i18n="lang_btn">English</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav class="sidebar">
+      <div class="nav-group">
+        <div class="nav-group-title" data-i18n="nav_group_analysis">分析</div>
+        <a href="index.html" data-i18n="nav_overview">项目概览</a>
+        <a href="forecast.html" data-i18n="nav_forecast">销量预测</a>
+        <a href="absa.html" data-i18n="nav_absa">舆情 ABSA</a>
+        <a href="attribution.html" data-i18n="nav_attribution">销量归因</a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-title" data-i18n="nav_group_relation">关系</div>
+        <a href="relation.html" data-i18n="nav_relation">舆情↔销量</a>
+        <a href="alerts.html" data-i18n="nav_alerts">舆情预警</a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-title" data-i18n="nav_group_drilldown">钻取</div>
+        <a href="drilldown.html" class="active" data-i18n="nav_drilldown">钻取分析</a>
+      </div>
+    </nav>
+
+    <main class="content">
+      <div class="page-head">
+        <h1 data-i18n="dd_title">钻取分析</h1>
+        
 <p class="lead-text" data-i18n="dd_lead">从宏观到微观两层钻取：品牌钻取展示品牌级销量/口碑走势与维度画像；车型钻取下探到单个车系的十维度口碑热力图。点击品牌排名中的车系可直接跳转至车型钻取。</p>
-{% endblock %}
-{% block content %}
+
+      </div>
+      
   <div class="tab-bar">
     <button class="tab-btn active" data-tab="brand" data-i18n="dd_tab_brand">品牌钻取</button>
     <button class="tab-btn" data-tab="series" data-i18n="dd_tab_series">车型钻取</button>
@@ -73,8 +114,22 @@
       </div>
     </div>
   </div>
-{% endblock %}
-{% block scripts %}
+
+    </main>
+  </div>
+
+  <script src="static/js/lib/echarts.min.js"></script>
+  <script src="static/js/theme.js"></script>
+  <script src="static/js/common.js"></script>
+  <script src="static/js/i18n.js"></script>
+  <!-- 在首屏绘制前同步应用语言，避免服务端渲染的中文默认文案先闪现再被 JS 替换（FOUC）。
+     中文版 zh→zh 为恒等式，无任何视觉变化；英文版绘制前即为英文，切换无卡顿。
+     应用完成后再显示 [data-i18n] 元素，彻底消除加载阶段的中文闪烁。 -->
+  <script>
+    try { window.I18N && window.I18N.apply(); } catch (e) {}
+    document.querySelectorAll("[data-i18n]").forEach(function (el) { el.style.visibility = "visible"; });
+  </script>
+  
 <script>
 var T = window.AUTOPULSE;
 
@@ -447,4 +502,6 @@ window.__renderers.renderDrilldown = function () {
   }
 };
 </script>
-{% endblock %}
+
+</body>
+</html>

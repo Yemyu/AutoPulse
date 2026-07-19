@@ -1878,7 +1878,7 @@
     {
       "name": "lag_1",
       "name_zh": "上月销量",
-      "name_en": "Sales (last month)",
+      "name_en": "Prev-month sales",
       "desc_zh": "销量自身惯性：上个月卖多少，下个月大概率延续",
       "desc_en": "Sales inertia: last month's sales strongly predict next month",
       "importance": 0.4724,
@@ -1886,8 +1886,8 @@
     },
     {
       "name": "roll_mean_3",
-      "name_zh": "近3月销量均值",
-      "name_en": "Sales 3-month average",
+      "name_zh": "近3月均值",
+      "name_en": "3-month average",
       "desc_zh": "平滑短期波动，捕捉季度趋势",
       "desc_en": "Smooths short-term noise and captures quarterly trend",
       "importance": 0.3406,
@@ -1895,8 +1895,8 @@
     },
     {
       "name": "roll_mean_6",
-      "name_zh": "近6月销量均值",
-      "name_en": "Sales 6-month average",
+      "name_zh": "近6月均值",
+      "name_en": "6-month average",
       "desc_zh": "平滑中长期波动，捕捉半年趋势",
       "desc_en": "Smooths medium-term noise and captures half-year trend",
       "importance": 0.0211,
@@ -1904,8 +1904,8 @@
     },
     {
       "name": "month_cos",
-      "name_zh": "月份季节性（余弦）",
-      "name_en": "Month seasonality (cosine)",
+      "name_zh": "月份·余弦",
+      "name_en": "Month (cos)",
       "desc_zh": "用三角函数编码月份，帮助模型识别春节/金九银十等季节性",
       "desc_en": "Trigonometric month encoding for seasonal patterns",
       "importance": 0.0123,
@@ -1913,8 +1913,8 @@
     },
     {
       "name": "month_sin",
-      "name_zh": "月份季节性（正弦）",
-      "name_en": "Month seasonality (sine)",
+      "name_zh": "月份·正弦",
+      "name_en": "Month (sin)",
       "desc_zh": "与 month_cos 配合，完整表达一年中各月周期性",
       "desc_en": "Pairs with month_cos to model annual seasonality",
       "importance": 0.0118,
@@ -1922,8 +1922,8 @@
     },
     {
       "name": "lag_2",
-      "name_zh": "前2月销量",
-      "name_en": "Sales 2 months ago",
+      "name_zh": "前两月销量",
+      "name_en": "2-months-ago sales",
       "desc_zh": "",
       "desc_en": "",
       "importance": 0.0105,
@@ -1940,8 +1940,8 @@
     },
     {
       "name": "lag_3",
-      "name_zh": "前3月销量",
-      "name_en": "Sales 3 months ago",
+      "name_zh": "前三月销量",
+      "name_en": "3-months-ago sales",
       "desc_zh": "",
       "desc_en": "",
       "importance": 0.0089,
@@ -1949,7 +1949,7 @@
     },
     {
       "name": "vehicle_class_enc",
-      "name_zh": "车辆级别",
+      "name_zh": "车型级别",
       "name_en": "Vehicle class",
       "desc_zh": "轿车/SUV/MPV 等级别属于车型固有属性",
       "desc_en": "Fixed vehicle attribute: sedan/SUV/MPV etc.",
@@ -1959,7 +1959,7 @@
     {
       "name": "negative_ratio",
       "name_zh": "负面评论占比",
-      "name_en": "Negative review ratio",
+      "name_en": "Negative ratio",
       "desc_zh": "该车系当月负面评论占比",
       "desc_en": "Share of negative reviews this month",
       "importance": 0.0077,
@@ -1968,7 +1968,7 @@
     {
       "name": "positive_ratio",
       "name_zh": "正面评论占比",
-      "name_en": "Positive review ratio",
+      "name_en": "Positive ratio",
       "desc_zh": "该车系当月正面评论占比",
       "desc_en": "Share of positive reviews this month",
       "importance": 0.0077,
@@ -1976,8 +1976,8 @@
     },
     {
       "name": "intelligence_lag2",
-      "name_zh": "智能化情感（滞后2月）",
-      "name_en": "Intelligence sentiment (lag 2M)",
+      "name_zh": "两月前智能化口碑",
+      "name_en": "Intelligence sentiment (lag-2)",
       "desc_zh": "两个月前的智能化口碑，检验滞后效应",
       "desc_en": "Two-month lagged intelligence sentiment to test lag effect",
       "importance": 0.0076,
@@ -1985,8 +1985,8 @@
     }
   ],
   "conclusion": {
-    "zh": "在 150 系评估集上，XGBoost（销量滞后+车型配置+舆情特征）体积加权 WMAPE 最低。特征重要性显示：销量自身滞后（lag_1、roll_mean_3）占绝对主导，说明销量主要由历史惯性驱动；舆情特征重要性普遍靠后。这引出一个关键问题：舆情是否在其他环节（如归因）才有价值？",
-    "en": "On the 150-series evaluation set, XGBoost (sales lags + vehicle config + sentiment features) achieves the lowest volume-weighted WMAPE. Feature importance shows sales lag features dominate, confirming sales are mainly driven by historical momentum; sentiment features rank low. This raises a key question: does sentiment matter more in attribution than in forecasting?"
+    "zh": "XGBoost（历史销量+车型配置+舆情特征）在 150 系评估集上取得最低体积加权 WMAPE。特征重要性由销量自身滞后（上月销量、近三月均值）绝对主导，即历史惯性驱动预测；舆情等外生特征在月粒度预测中增益有限——其价值在销量归因环节得到验证（见归因屏）。",
+    "en": "XGBoost (historical sales + vehicle config + sentiment) achieves the lowest volume-weighted WMAPE on the 150-series set. Feature importance is dominated by sales lag features (previous month, 3-month average) — historical momentum drives the forecast; exogenous features like sentiment add little at monthly granularity, and their value is validated in the attribution step (see Attribution)."
   },
   "best_model": "XGBoost",
   "feature_insight": {

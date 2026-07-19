@@ -19,9 +19,18 @@
 
 1. **下个月能卖多少？** —— 用 ARIMA / Prophet / XGBoost / LSTM / 融合模型做销量预测。
 2. **用户舆情真的影响销量吗？** —— 用大模型做 ABSA（Aspect-Based Sentiment Analysis）逐维度情感分析，再用 SHAP / Granger 因果量化影响。
-3. **如何持续监控？** —— 把前五阶段结论封装成 Flask + ECharts 交互式网页看板，实现品牌→车系下钻、情感预警、归因可视化。
+3. **如何持续监控？** —— 把前五阶段结论封装成纯静态 HTML + ECharts 交互式网页看板，实现品牌→车系下钻、情感预警、归因可视化。
 
 > 这是一个数据分析&开发作品集：从原始数据采集、清洗、建模、归因到最终交互看板，全部可复现。
+
+---
+
+## 在线看板（先看成果）
+
+- 🌐 **在线演示**：https://yemyu.github.io/AutoPulse/（由 GitHub Pages 自动部署，每次 push 到 `main` 即更新）
+- 本地预览：`cd app && python -m http.server 8000`，浏览器打开 http://localhost:8000/
+
+> 完整环境安装、本地运行与数据更新见下方「快速开始」。
 
 ---
 
@@ -124,8 +133,8 @@
 **问题**：如何让非技术决策者也能按“问题 → 证据 → 结论”浏览全部成果？
 
 **方法**：
-- 用 **Flask + ECharts** 搭建 7 屏交互式看板：项目概览、销量预测、舆情 ABSA、销量归因、舆情↔销量关系、舆情预警、品牌/车型钻取。
-- 数据由 `app/build_dashboard_data.py` 预烘焙为 `app/static/data/*.json`，前端直接读取，后端只负责模板渲染。
+- 用 **HTML + ECharts** 搭建 7 屏纯静态交互式看板：项目概览、销量预测、舆情 ABSA、销量归因、舆情↔销量关系、舆情预警、品牌/车型钻取。
+- 数据由 `app/build_dashboard_data.py` 预烘焙为 `app/static/data/*.json`，前端直接 `fetch` 读取，无需任何后端服务。
 - 支持中英双语切换；品牌/车型钻取支持 Tab 联动下钻。
 
 **结果**：本地启动即可在浏览器中交互式查看全部分析结论，无需重新跑模型。
@@ -186,15 +195,18 @@
 pip install -r requirements.txt
 ```
 
-### 启动网页看板
+### 启动网页看板（本地）
 
 ```bash
-python app/app.py
+cd app && python -m http.server 8000
 ```
 
-打开浏览器访问 http://127.0.0.1:5001/ 。
+打开浏览器访问 http://localhost:8000/ 即可预览。（看板是纯静态站点，不依赖任何后端服务。）
 
-看板所需数据已预烘焙在 `app/static/data/*.json`，**无需重跑任何采集或建模脚本即可直接查看**。如需在本地更新数据桥（需已跑过完整管线、本地存在 `data/processed/*.csv`），运行：
+### 在线看板
+
+- 🌐 **在线演示**：https://yemyu.github.io/AutoPulse/ （由 GitHub Pages 自动部署，每次 push 到 `main` 即更新）
+- 看板所需数据已预烘焙在 `app/static/data/*.json`，**无需重跑任何采集或建模脚本即可直接查看**。如需在本地更新数据桥（需已跑过完整管线、本地存在 `data/processed/*.csv`），运行：
 
 ```bash
 python app/build_dashboard_data.py
@@ -206,11 +218,11 @@ python app/build_dashboard_data.py
 
 ```
 AutoPulse/
-├── app/                           # 阶段六 · 网页看板（Flask + ECharts）
-│   ├── app.py                     # 看板服务入口
+├── app/                           # 阶段六 · 纯静态网页看板（HTML + ECharts，GitHub Pages 部署）
+│   ├── index.html / forecast.html / …  # 7 屏静态页面
 │   ├── build_dashboard_data.py    # 预烘焙 JSON 数据桥
-│   ├── static/                    # CSS/JS/JSON 数据
-│   └── templates/                 # 7 屏 HTML 模板
+│   ├── .nojekyll                  # 禁用 GitHub Pages 的 Jekyll 处理
+│   └── static/                    # CSS/JS/JSON 数据
 ├── data/                          # 数据目录（CSV 已 gitignore）
 │   ├── README.md                  # 数据说明（中文）
 │   ├── README_EN.md               # 数据说明（英文）
@@ -238,7 +250,7 @@ AutoPulse/
 - **NLP**：jieba、Hugging Face Transformers、DeepSeek API（ABSA）
 - **机器学习 / 时序**：scikit-learn、XGBoost、 Prophet、statsmodels、PyTorch（LSTM）
 - **可视化**：Matplotlib、ECharts（网页看板）
-- **Web 看板**：Flask、Jinja2、原生 JS、ECharts 5
+- **Web 看板**：原生 HTML/CSS/JS、ECharts 5（纯静态，GitHub Pages 托管）
 - **依赖管理**：`requirements.txt`
 
 ---

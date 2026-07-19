@@ -1,6 +1,6 @@
 // AutoPulse 看板通用前端助手
 function loadJSON(name) {
-  return fetch('/static/data/' + name + '.json').then(function (r) { return r.json(); });
+  return fetch('static/data/' + name + '.json').then(function (r) { return r.json(); });
 }
 
 function initChart(id) {

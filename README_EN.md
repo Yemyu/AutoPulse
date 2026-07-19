@@ -18,9 +18,18 @@
 
 1. **How many cars will we sell next month?** — Sales forecasting with ARIMA / Prophet / XGBoost / LSTM / ensemble models.
 2. **Does user sentiment really affect sales?** — Deep ABSA (Aspect-Based Sentiment Analysis) with a large language model, plus SHAP / Granger causality to quantify the impact.
-3. **How do we monitor it continuously?** — Package all previous findings into a Flask + ECharts interactive web dashboard with brand → series drill-down, sentiment alerts, and attribution visualizations.
+3. **How do we monitor it continuously?** — Package all previous findings into a pure-static HTML + ECharts interactive web dashboard with brand → series drill-down, sentiment alerts, and attribution visualizations.
 
 > This is a portfolio-grade data analysis project: from raw data collection, cleaning, modeling, attribution, and finally to an interactive dashboard, all reproducible from scripts.
+
+---
+
+## Online Dashboard (See the results first)
+
+- 🌐 **Live demo**: https://yemyu.github.io/AutoPulse/ (auto-deployed to GitHub Pages; updates on every push to `main`)
+- Local preview: `cd app && python -m http.server 8000`, then open http://localhost:8000/ in your browser.
+
+> Full setup, local run, and data refresh are in **Quick Start** below.
 
 ---
 
@@ -123,8 +132,8 @@ The project is organized into six real-world stages, corresponding to the `01_` 
 **Question**: How can non-technical stakeholders browse all findings in a "problem → evidence → conclusion" narrative?
 
 **Approach**:
-- Build a **Flask + ECharts** 7-screen dashboard: Overview, Sales Forecasting, Sentiment ABSA, Attribution, Sentiment↔Sales Relation, Alerts, and Brand/Series Drill-down.
-- Data is pre-baked into `app/static/data/*.json` by `app/build_dashboard_data.py`; the backend only renders templates.
+- Build a **HTML + ECharts** 7-screen pure-static dashboard: Overview, Sales Forecasting, Sentiment ABSA, Attribution, Sentiment↔Sales Relation, Alerts, and Brand/Series Drill-down.
+- Data is pre-baked into `app/static/data/*.json` by `app/build_dashboard_data.py`; the frontend fetches it directly — no backend service needed.
 - Supports Chinese/English switching; brand and series drill-down tabs are cross-linked.
 
 **Result**: Launch locally and interactively explore all analysis conclusions in a browser, without re-running models.
@@ -185,15 +194,18 @@ Dependencies are listed in `requirements.txt`. Install them in any Python enviro
 pip install -r requirements.txt
 ```
 
-### Launch the web dashboard
+### Launch the web dashboard (local)
 
 ```bash
-python app/app.py
+cd app && python -m http.server 8000
 ```
 
-Open the browser at http://127.0.0.1:5001/.
+Open the browser at http://localhost:8000/ to preview. (The dashboard is a static site and needs no backend server.)
 
-The dashboard data is already pre-baked into `app/static/data/*.json`, so **no crawling or modeling scripts need to be run to view it**. To refresh the data bridge locally (requires having run the full pipeline, i.e. `data/processed/*.csv` present), run:
+### Live demo
+
+- 🌐 **Live demo**: https://yemyu.github.io/AutoPulse/ (auto-deployed to GitHub Pages; updates on every push to `main`)
+- The dashboard data is already pre-baked into `app/static/data/*.json`, so **no crawling or modeling scripts need to be run to view it**. To refresh the data bridge locally (requires having run the full pipeline, i.e. `data/processed/*.csv` present), run:
 
 ```bash
 python app/build_dashboard_data.py
@@ -205,11 +217,11 @@ python app/build_dashboard_data.py
 
 ```
 AutoPulse/
-├── app/                           # Stage 6 · Web dashboard (Flask + ECharts)
-│   ├── app.py                     # Dashboard entry point
+├── app/                           # Stage 6 · pure-static web dashboard (HTML + ECharts, GitHub Pages)
+│   ├── index.html / forecast.html / …  # 7 static pages
 │   ├── build_dashboard_data.py    # Pre-bake JSON data bridge
-│   ├── static/                    # CSS/JS/JSON data
-│   └── templates/                 # 7-screen HTML templates
+│   ├── .nojekyll                  # disable GitHub Pages' Jekyll
+│   └── static/                    # CSS/JS/JSON data
 ├── data/                          # Data directory (CSVs gitignored)
 │   ├── README.md                  # Data docs (Chinese)
 │   ├── README_EN.md               # Data docs (English)
@@ -237,7 +249,7 @@ AutoPulse/
 - **NLP**: jieba, Hugging Face Transformers, DeepSeek API (ABSA)
 - **Machine learning / time-series**: scikit-learn, XGBoost, Prophet, statsmodels, PyTorch (LSTM)
 - **Visualization**: Matplotlib, ECharts (web dashboard)
-- **Web dashboard**: Flask, Jinja2, vanilla JS, ECharts 5
+- **Web dashboard**: vanilla HTML/CSS/JS, ECharts 5 (pure static, GitHub Pages hosted)
 - **Dependency management**: `requirements.txt`
 
 ---
