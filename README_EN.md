@@ -6,7 +6,7 @@
 
 <p align="center">
   Multi-source automotive data + user word-of-mouth sentiment + sales forecasting & attribution →
-  a end-to-end analytics pipeline and interactive web dashboard.
+  an end-to-end analytics pipeline and interactive web dashboard.
 </p>
 <video src="https://github.com/user-attachments/assets/977dd7cc-c016-4697-8468-beba9ce47ff1" width="900" controls></video>
 
@@ -20,20 +20,20 @@
 2. **Does user sentiment really affect sales?** — Deep ABSA (Aspect-Based Sentiment Analysis) with a large language model, plus SHAP / Granger causality to quantify the impact.
 3. **How do we monitor it continuously?** — Package all previous findings into a pure-static HTML + ECharts interactive web dashboard with brand → series drill-down, sentiment alerts, and attribution visualizations.
 
-> This is a portfolio-grade data analysis project: from raw data collection, cleaning, modeling, attribution, and finally to an interactive dashboard, all reproducible from scripts.
+> This is a portfolio-grade data-analysis & development project: from raw data collection, cleaning, modeling, attribution, and finally to an interactive dashboard, all reproducible from scripts.
 
 ---
 
-## Online Dashboard (See the results first)
+## Online Dashboard
 
-- 🌐 **Live demo**: https://yemyu.github.io/AutoPulse/ (auto-deployed to GitHub Pages; updates on every push to `main`)
+- 🌐 **Live demo**: https://yemyu.github.io/AutoPulse/
 - Local preview: `cd app && python -m http.server 8000`, then open http://localhost:8000/ in your browser.
 
 > Full setup, local run, and data refresh are in **Quick Start** below.
 
 ---
 
-## Six-Stage Workflow (Read like a Notebook)
+## Six-Stage Workflow
 
 The project is organized into six real-world stages, corresponding to the `01_` ~ `20_` pipeline scripts in `scripts/` and the `notebook/AutoPulse_Analysis_EN.ipynb`.
 
@@ -204,7 +204,7 @@ Open the browser at http://localhost:8000/ to preview. (The dashboard is a stati
 
 ### Live demo
 
-- 🌐 **Live demo**: https://yemyu.github.io/AutoPulse/ (auto-deployed to GitHub Pages; updates on every push to `main`)
+- 🌐 **Live demo**: https://yemyu.github.io/AutoPulse/
 - The dashboard data is already pre-baked into `app/static/data/*.json`, so **no crawling or modeling scripts need to be run to view it**. To refresh the data bridge locally (requires having run the full pipeline, i.e. `data/processed/*.csv` present), run:
 
 ```bash
@@ -228,10 +228,10 @@ AutoPulse/
 │   ├── raw/                       # vehicles.csv, sales.csv
 │   ├── sentiment/                 # review details & aggregates
 │   └── processed/                 # stage artifacts (reproducible)
-├── figures/                       # Analysis charts, dashboard screenshots, and demo GIF
+├── figures/                       # Analysis charts, dashboard screenshots, and interactive demo (committed)
 ├── LICENSE                        # MIT license
 ├── notebook/                      # Bilingual analysis notebooks
-│   ├── AutoPulse_Analysis_EN.ipynb
+│   ├── AutoPulse_Analysis.ipynb
 │   └── AutoPulse_Analysis_EN.ipynb
 ├── scripts/                       # 01_~20_ pipeline scripts
 ├── config/                        # Config & .env template
@@ -256,7 +256,7 @@ AutoPulse/
 
 ## Data Notes
 
-- All data come from **public automotive platforms** (Autohome, PCauto, etc.; user sentiment from Dongchedi). **No manual curation, no personal information**.
+- All data come from **public automotive platforms** (Autohome, PCauto, etc.; user sentiment from Dongchedi).
 - Raw / intermediate data is large and gitignored; follow the "Quick Start" steps to launch the dashboard directly after cloning.
 - Data copyright belongs to the original platforms. This project is for learning, research, and demonstration only, not commercial use.
 

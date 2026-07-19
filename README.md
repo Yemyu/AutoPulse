@@ -25,9 +25,9 @@
 
 ---
 
-## 在线看板（先看成果）
+## 在线看板
 
-- 🌐 **在线演示**：https://yemyu.github.io/AutoPulse/（由 GitHub Pages 自动部署，每次 push 到 `main` 即更新）
+- 🌐 **在线演示**：https://yemyu.github.io/AutoPulse/
 - 本地预览：`cd app && python -m http.server 8000`，浏览器打开 http://localhost:8000/
 
 > 完整环境安装、本地运行与数据更新见下方「快速开始」。
@@ -205,7 +205,7 @@ cd app && python -m http.server 8000
 
 ### 在线看板
 
-- 🌐 **在线演示**：https://yemyu.github.io/AutoPulse/ （由 GitHub Pages 自动部署，每次 push 到 `main` 即更新）
+- 🌐 **在线演示**：https://yemyu.github.io/AutoPulse/
 - 看板所需数据已预烘焙在 `app/static/data/*.json`，**无需重跑任何采集或建模脚本即可直接查看**。如需在本地更新数据桥（需已跑过完整管线、本地存在 `data/processed/*.csv`），运行：
 
 ```bash
